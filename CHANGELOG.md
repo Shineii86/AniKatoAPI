@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2026-06-08
+
+### Changed
+- Restructured API Endpoints section to match HiAnime-Api documentation style
+- Added category headers with blockquote format: `> ## 🏠 GET Home Info`
+- Each endpoint now has: Endpoint path, Parameters table, Example of request (curl + JS), Sample Response
+- 19 documentation sections covering all API endpoints
+
 ## [1.5.3] - 2026-06-08
 
 ### Fixed
