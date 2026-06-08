@@ -16,6 +16,7 @@
  * ======= • ======= • ======= • ======= • =======• =======
  */
 
+import * as cheerio from "cheerio";
 import axios from "axios";
 import { headers } from "../configs/header.config.js";
 import { BASE_URL } from "../configs/dataUrl.js";
@@ -40,7 +41,6 @@ import { BASE_URL } from "../configs/dataUrl.js";
 const extractStreamInfo = async (linkId) => {
   try {
     const url = `${BASE_URL}/ajax/server?get=${linkId}`;
-    // NOTE: X-Requested-With header is required for AJAX endpoints on anikototv.to
     const { data } = await axios.get(url, {
       headers: {
         ...headers,
@@ -48,14 +48,17 @@ const extractStreamInfo = async (linkId) => {
       }
     });
 
+    // NOTE: Response is JSON {status, result: {url, skip_data}}
     if (!data || !data.result) {
       return { linkId, url: null, skipData: null };
     }
 
+    const result = typeof data.result === "string" ? (() => { try { return JSON.parse(data.result); } catch { return {}; } })() : data.result;
+
     return {
       linkId,
-      url: data.result.url || null,
-      skipData: data.result.skip_data || null
+      url: result.url || null,
+      skipData: result.skip_data || null
     };
   } catch (error) {
     throw error;
@@ -81,14 +84,34 @@ const extractStreamInfo = async (linkId) => {
 const extractServerList = async (episodeIds) => {
   try {
     const url = `${BASE_URL}/ajax/server/list?servers=${episodeIds}`;
-    const { data } = await axios.get(url, {
+    const { data: raw } = await axios.get(url, {
       headers: {
         ...headers,
         "X-Requested-With": "XMLHttpRequest"
       }
     });
 
-    return data;
+    // NOTE: Response is JSON {status, result} where result is HTML
+    const html = typeof raw === "string" ? raw : (raw?.result || "");
+    const $ = cheerio.load(html);
+
+    const servers = [];
+    // NOTE: Servers are in .servers div, grouped by type (sub/dub)
+    $(".servers .type").each((_, typeEl) => {
+      const type = $(typeEl).attr("data-type") || "sub";
+      $(typeEl).find("li[data-link-id]").each((__, li) => {
+        servers.push({
+          type,
+          ep_id: $(li).attr("data-ep-id") || "",
+          link_id: $(li).attr("data-link-id") || "",
+          cmid: $(li).attr("data-cmid") || "",
+          sv_id: $(li).attr("data-sv-id") || "",
+          name: $(li).text().trim() || ""
+        });
+      });
+    });
+
+    return servers;
   } catch (error) {
     throw error;
   }

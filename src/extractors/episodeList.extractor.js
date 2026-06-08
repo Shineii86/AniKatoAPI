@@ -56,27 +56,32 @@ const extractEpisodeList = async (slug) => {
     try {
       // NOTE: AJAX endpoint requires X-Requested-With header to return HTML fragment
       const ajaxUrl = `${BASE_URL}/ajax/episode/list/${animeId}`;
-      const { data: ajaxData } = await axios.get(ajaxUrl, {
+      const { data: ajaxRaw } = await axios.get(ajaxUrl, {
         headers: {
           ...headers,
           "X-Requested-With": "XMLHttpRequest"
         }
       });
 
-      const $ep = cheerio.load(ajaxData);
+      // NOTE: AJAX response is JSON {status, result} where result is HTML
+      const ajaxHtml = typeof ajaxRaw === "string" ? ajaxRaw : (ajaxRaw?.result || "");
+      const $ep = cheerio.load(ajaxHtml);
 
       // ---- FEATURE: Parse episode list from AJAX response HTML ----
       // NOTE: Episode links have either data-num or data-ep-id attributes
       const episodes = [];
-      $ep("a[data-num], a[data-ep-id]").each((i, el) => {
+      $ep("a[data-num], a[data-ep-id], a[data-id]").each((i, el) => {
         const epId = $ep(el).attr("data-ep-id") || $ep(el).attr("data-id") || "";
         const epNum = parseInt($ep(el).attr("data-num")) || i + 1;
         const epSlug = $ep(el).attr("data-slug") || "";
         const href = $ep(el).attr("href") || "";
-        // NOTE: Episode title is in .ep-title or .ep-name span
         const epTitle = $ep(el).find(".ep-title, .ep-name").text().trim() || "";
-        // NOTE: Active class indicates the currently-playing episode
         const isActive = $ep(el).hasClass("active") || false;
+        // NOTE: data-ids is the base64-encoded server ID string needed for /api/servers
+        const serverIds = $ep(el).attr("data-ids") || "";
+        // NOTE: data-timestamp used for mapper API
+        const timestamp = $ep(el).attr("data-timestamp") || "";
+        const malId = $ep(el).attr("data-mal") || "";
 
         episodes.push({
           id: epId,
@@ -84,7 +89,10 @@ const extractEpisodeList = async (slug) => {
           slug: epSlug,
           title: epTitle,
           active: isActive,
-          href
+          href,
+          server_ids: serverIds,
+          timestamp,
+          mal_id: malId
         });
       });
 
