@@ -321,12 +321,136 @@ const createApiRoutes = (app, jsonResponse, jsonError) => {
     }
   });
 
-  // ══════════════════════════════════════════════════════════════
-  // CATEGORY ROUTES
-  // ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+// CATEGORY ROUTES
+// ══════════════════════════════════════════════════════════════
 
-  // NOTE: Category routes (genre, type, status) are registered separately
-  categoryRoutes(app, jsonResponse, jsonError);
+// NOTE: Category routes (genre, type, status) are registered separately
+categoryRoutes(app, jsonResponse, jsonError);
+
+// ══════════════════════════════════════════════════════════════
+// HEALTH & STATS
+// ══════════════════════════════════════════════════════════════
+
+const startTime = Date.now();
+let requestCount = 0;
+let errorCount = 0;
+
+// Middleware to count requests
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    requestCount++;
+    res.on("finish", () => {
+      if (res.statusCode >= 400) errorCount++;
+    });
+  }
+  next();
+});
+
+// ---- FEATURE: Health check endpoint ----
+app.get("/api/health", (req, res) => {
+  const uptime = Math.floor((Date.now() - startTime) / 1000);
+  const hours = Math.floor(uptime / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  const seconds = uptime % 60;
+
+  res.json({
+    success: true,
+    results: {
+      status: "healthy",
+      version: "1.7.2",
+      uptime: `${hours}h ${minutes}m ${s}s`,
+      uptimeSeconds: uptime,
+      timestamp: new Date().toISOString(),
+      node: process.version,
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + "MB",
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + "MB",
+      },
+    },
+  });
+});
+
+// ---- FEATURE: Cache & API statistics ----
+app.get("/api/stats", (req, res) => {
+  const uptime = Math.floor((Date.now() - startTime) / 1000);
+
+  res.json({
+    success: true,
+    results: {
+      uptime: uptime + "s",
+      requests: {
+        total: requestCount,
+        errors: errorCount,
+        successRate: requestCount > 0
+          ? ((1 - errorCount / requestCount) * 100).toFixed(1) + "%"
+          : "100%",
+      },
+      cache: {
+        type: "in-memory",
+        ttl: "5 minutes",
+        description: "Map-based cache with TTL expiration",
+      },
+      endpoints: 27,
+      timestamp: new Date().toISOString(),
+    },
+  });
+});
+
+// ---- FEATURE: OpenAPI specification ----
+app.get("/api/openapi", (req, res) => {
+  res.json({
+    openapi: "3.0.3",
+    info: {
+      title: "AniKotoAPI",
+      description: "Free REST API for anime data from anikototv.to",
+      version: "1.7.2",
+      contact: {
+        name: "Shinei Nouzen",
+        url: "https://github.com/Shineii86/AniKotoAPI",
+      },
+    },
+    servers: [
+      { url: "https://anikototvapi.vercel.app/api", description: "Production" },
+    ],
+    paths: {
+      "/": { get: { summary: "Homepage data", tags: ["Home"] } },
+      "/search": { get: { summary: "Search anime", tags: ["Search"] } },
+      "/info": { get: { summary: "Anime info", tags: ["Anime"] } },
+      "/episodes/{id}": { get: { summary: "Episode list", tags: ["Episodes"] } },
+      "/servers": { get: { summary: "Server list", tags: ["Streaming"] } },
+      "/stream": { get: { summary: "Stream URL", tags: ["Streaming"] } },
+      "/schedule": { get: { summary: "Anime schedule", tags: ["Schedule"] } },
+      "/random": { get: { summary: "Random anime", tags: ["Discovery"] } },
+      "/top-ten": { get: { summary: "Top 10 rankings", tags: ["Rankings"] } },
+      "/trending": { get: { summary: "Trending anime", tags: ["Discovery"] } },
+      "/spotlight": { get: { summary: "Spotlight anime", tags: ["Discovery"] } },
+      "/most-popular": { get: { summary: "Most popular", tags: ["Rankings"] } },
+      "/new-release": { get: { summary: "New releases", tags: ["Releases"] } },
+      "/filter": { get: { summary: "Advanced filter", tags: ["Filter"] } },
+      "/genre/{name}": { get: { summary: "By genre", tags: ["Categories"] } },
+      "/type/{name}": { get: { summary: "By type", tags: ["Categories"] } },
+      "/status/{name}": { get: { summary: "By status", tags: ["Categories"] } },
+      "/health": { get: { summary: "Health check", tags: ["System"] } },
+      "/stats": { get: { summary: "API statistics", tags: ["System"] } },
+      "/openapi": { get: { summary: "OpenAPI spec", tags: ["System"] } },
+    },
+    tags: [
+      { name: "Home", description: "Homepage data" },
+      { name: "Search", description: "Search & suggestions" },
+      { name: "Anime", description: "Anime details" },
+      { name: "Episodes", description: "Episode lists" },
+      { name: "Streaming", description: "Stream URLs & servers" },
+      { name: "Schedule", description: "Airing schedule" },
+      { name: "Discovery", description: "Random, trending, spotlight" },
+      { name: "Rankings", description: "Top 10, most popular" },
+      { name: "Releases", description: "New releases" },
+      { name: "Filter", description: "Advanced filtering" },
+      { name: "Categories", description: "Genre, type, status" },
+      { name: "System", description: "Health, stats, OpenAPI" },
+    ],
+  });
+});
 };
 
 export { createApiRoutes };

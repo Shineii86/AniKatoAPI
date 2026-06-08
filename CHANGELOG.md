@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docs/streaming.md` — Streaming flow guide (3-step with real data)
   - `docs/examples.md` — Code examples in cURL, JavaScript, Python, Node.js (all tested)
   - `docs/architecture.md` — Project structure, tech stack, design decisions
+- `/api/health` — Health check endpoint (uptime, version, memory)
+- `/api/stats` — Cache & API statistics (requests, errors, success rate)
+- `/api/openapi` — OpenAPI 3.0.3 specification
+- Security headers: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection
+- Request counter middleware for statistics
+- `CONTRIBUTING.md` — Contribution guidelines
+- `test.js` — Integration test suite (18 endpoints)
 
 ### Fixed
 - Clean URLs: `/tos` and `/privacy` instead of `/tos.html` and `/privacy.html`
