@@ -418,9 +418,19 @@ https://anikato.vercel.app/api
 
 ---
 
-### `GET /api/`
+> ## 🏠 GET Home Info
 
-Home page data — spotlight carousel, trending anime, top airing, and genre list.
+### Endpoint
+
+```bash
+/
+```
+
+#### Parameters
+
+> No parameters required.
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/"
@@ -432,8 +442,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/");
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -458,18 +467,76 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/search`
+> ## 🔝 GET Top 10 Anime's Info
 
-Search anime by keyword with pagination.
+### Endpoint
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `keyword` | `string` | **required** | Search query |
-| `page` | `number` | `1` | Page number |
+```bash
+/top-ten
+```
+
+#### Parameters
+
+> No parameters required.
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/top-ten"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/top-ten");
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": {
+    "today": [
+      { "slug": "i-want-you-to-show-me-your-panties-with-a-disgusted-face-returns", "rank": 1, "name": "I Want You To Show Me Your Panties With a Disgusted Face Returns", "poster": "https://cdn.anipixcdn.co/thumbnail/1dea34fcedb64cd270f5d2de28f485f1.jpg", "sub": 6, "dub": 0, "type": "" },
+      { "slug": "wistoria-wand-and-sword-season-2-dua04", "rank": 2, "name": "Wistoria: Wand and Sword Season 2", "poster": "https://cdn.anipixcdn.co/thumbnail/4739d8dbd05dddb73604f6240b83ea68.jpg", "sub": 9, "dub": 7, "type": "" },
+      { "slug": "one-piece-odmau", "rank": 3, "name": "One Piece", "poster": "https://cdn.anipixcdn.co/thumbnail/f899139df5e1059396431415e770c6dd.jpg", "sub": 1165, "dub": 1133, "type": "" }
+    ],
+    "week": [
+      { "slug": "one-piece-odmau", "rank": 1, "name": "One Piece", "poster": "https://cdn.anipixcdn.co/thumbnail/f899139df5e1059396431415e770c6dd.jpg", "sub": 1165, "dub": 1133, "type": "" },
+      { "slug": "i-want-you-to-show-me-your-panties-with-a-disgusted-face-returns", "rank": 2, "name": "I Want You To Show Me Your Panties With a Disgusted Face Returns", "sub": 6, "dub": 0, "type": "" },
+      { "slug": "re-zero-starting-life-in-another-world-season-4-4hk9h", "rank": 3, "name": "Re:ZERO -Starting Life in Another World- Season 4", "sub": 9, "dub": 9, "type": "" }
+    ],
+    "month": [
+      { "slug": "one-piece-odmau", "rank": 1, "name": "One Piece", "poster": "https://cdn.anipixcdn.co/thumbnail/f899139df5e1059396431415e770c6dd.jpg", "sub": 1165, "dub": 1133, "type": "" },
+      { "slug": "that-time-i-got-reincarnated-as-a-slime-season-4-0u851", "rank": 2, "name": "That Time I Got Reincarnated as a Slime Season 4", "sub": 9, "dub": 7, "type": "" },
+      { "slug": "wistoria-wand-and-sword-season-2-dua04", "rank": 3, "name": "Wistoria: Wand and Sword Season 2", "sub": 9, "dub": 7, "type": "" }
+    ]
+  }
+}
+```
+
+---
+
+> ## 🔍 GET Top Search
+
+### Endpoint
+
+```bash
+/search
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `keyword` | `string` | Yes ✔️ | — | Search query |
+| `page` | `number` | No | `1` | Page number |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/search?keyword=one+piece"
@@ -483,8 +550,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/search", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -499,54 +565,24 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/search/suggest`
+> ## ℹ️ GET Specified Anime's Info
 
-Search suggestions for autocomplete (returns max 10 results).
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `keyword` | `string` | **required** | Search query |
+### Endpoint
 
 ```bash
-curl "https://anikato.vercel.app/api/search/suggest?keyword=one+piece"
+/info
 ```
 
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/search/suggest", {
-  params: { keyword: "one piece" }
-});
-console.log(resp.data);
-```
+#### Parameters
 
-<details>
-<summary>📄 Example Response</summary>
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `id` | `string` | Yes ✔️ | — | Anime slug |
 
-```json
-{
-  "success": true,
-  "results": [
-    { "slug": "one-piece-episode-of-luffy-hand-island-adventure-br7lf/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/4f16c818875d9fcb6867c7bdc89be7eb.jpg", "title": "One Piece: Episode of Luffy - Hand Island Adventure", "type": "Special" },
-    { "slug": "one-piece-dead-end-n6fbv/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/242c100dc94f871b6d7215b868a875f8.jpg", "title": "One Piece: Dead End", "type": "Movie" },
-    { "slug": "one-piece-wano-kuni-sp-r0xwk/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/8849f0a976aa5332853e848655a1d28f.jpg", "title": "One Piece - Wano Kuni SP", "type": "Special" }
-  ]
-}
-```
-</details>
-
----
-
-### `GET /api/info`
-
-Detailed anime information including synopsis, genres, studios, and more.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `id` | `string` | **required** | Anime slug |
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/info?id=one-piece-odmau"
@@ -560,8 +596,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/info", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -590,18 +625,162 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/watch`
+> ## 🎲 GET Random Anime's Info
 
-Complete watch page data — anime info, episode list, servers, trending, and recommended.
+### Endpoint
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `slug` | `string` | **required** | Anime slug |
-| `ep` | `number` | **required** | Episode number |
+```bash
+/random
+```
+
+#### Parameters
+
+> No parameters required.
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/random"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/random");
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": {
+    "slug": "https://anikototv.to/random",
+    "animeId": 2298,
+    "title": "Keep it a Secret from Maria-sama",
+    "japaneseTitle": "Maria-sama ga Miteru 4th Specials",
+    "poster": "https://cdn.anipixcdn.co/thumbnail/f35a2bc72dfdc2aae569a0c7370bd7f5.jpg",
+    "type": "Special",
+    "synopsis": "A series of specials included on the Maria-sama ga Miteru 4th DVD releases.",
+    "rating": "7.23   7.23 /10",
+    "genres": ["Comedy"],
+    "url": "https://anikototv.to/random"
+  }
+}
+```
+
+---
+
+> ## 📅 GET Anime Schedule
+
+### Endpoint
+
+```bash
+/schedule
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `date` | `string` | Yes ✔️ | — | Date in `YYYY-MM-DD` format |
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/schedule?date=2026-06-08"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/schedule", {
+  params: { date: "2026-06-08" }
+});
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "slug": "anime-slug-xyz/ep-1",
+      "title": "Anime Title",
+      "episode": "Ep 1",
+      "japaneseTitle": "Japanese Title",
+      "type": "TV",
+      "subs": 1,
+      "dubs": 0
+    }
+  ]
+}
+```
+
+---
+
+> ## 📺 GET Anime Episodes
+
+### Endpoint
+
+```bash
+/episodes/:id
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `id` | `string` | Yes ✔️ | — | Anime slug |
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/episodes/one-piece-odmau"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/episodes/one-piece-odmau");
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": {
+    "animeId": 1642,
+    "slug": "one-piece-odmau",
+    "totalEpisodes": 0,
+    "episodes": []
+  }
+}
+```
+
+---
+
+> ## 📡 GET Anime Stream Info
+
+### Endpoint
+
+```bash
+/watch
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `slug` | `string` | Yes ✔️ | — | Anime slug |
+| `ep` | `number` | Yes ✔️ | — | Episode number |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/watch?slug=one-piece-odmau&ep=1165"
@@ -615,8 +794,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/watch", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -655,118 +833,107 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/episodes/:id`
+> ## 🖥️ GET Available Servers
 
-Episode list for an anime (loaded via AJAX for accuracy).
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `id` | `string` | **required** | Anime slug |
+### Endpoint
 
 ```bash
-curl "https://anikato.vercel.app/api/episodes/one-piece-odmau"
+/servers
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `ids` | `string` | Yes ✔️ | — | Episode IDs |
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/servers?ids={episodeIds}"
 ```
 
 ```javascript
 import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/episodes/one-piece-odmau");
-console.log(resp.data);
-```
-
-<details>
-<summary>📄 Example Response</summary>
-
-```json
-{
-  "success": true,
-  "results": {
-    "animeId": 1642,
-    "slug": "one-piece-odmau",
-    "totalEpisodes": 0,
-    "episodes": []
-  }
-}
-```
-</details>
-
----
-
-### `GET /api/episodes-ajax/:id`
-
-Raw AJAX episode list response from the source site. Returns HTML that contains episode buttons with `data-ep-id`, `data-num`, and `data-slug` attributes.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `id` | `number` | **required** | Anime ID |
-
-```bash
-curl "https://anikato.vercel.app/api/episodes-ajax/1642"
-```
-
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/episodes-ajax/1642");
-console.log(resp.data);
-```
-
-<details>
-<summary>📄 Example Response</summary>
-
-```json
-{
-  "success": true,
-  "results": "<a data-ep-id=\"12345\" data-num=\"1\" data-slug=\"ep-1\" href=\"/watch/one-piece-odmau/ep-1\" class=\"active\">...</a>..."
-}
-```
-
-> 💡 This endpoint returns raw HTML from the AJAX call. Use `/api/episodes/:slug` for parsed episode data instead.
-</details>
-
----
-
-### `GET /api/stream`
-
-Streaming server info — extracts video embed URL and skip data via AJAX. Requires a `linkId` from the server buttons on the watch page.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `id` | `string` | **required** | Link ID from server buttons (`data-link-id`) |
-
-```bash
-curl "https://anikato.vercel.app/api/stream?id={linkId}"
-```
-
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/stream", {
-  params: { id: "yourLinkId" }
+const resp = await axios.get("https://anikato.vercel.app/api/servers", {
+  params: { ids: "yourEpisodeIds" }
 });
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
   "success": true,
   "results": {
-    "linkId": "abc123",
-    "url": "https://embed.s3t.stream/embed/xyz",
-    "skipData": {
-      "intro": { "start": 0, "end": 90 },
-      "outro": { "start": 1320, "end": 1410 }
-    }
+    "sub": [
+      { "server_id": 1, "server_name": "Vidstreaming", "type": "sub" },
+      { "server_id": 2, "server_name": "Gogocdn", "type": "sub" }
+    ],
+    "dub": [
+      { "server_id": 3, "server_name": "Vidstreaming", "type": "dub" }
+    ]
   }
 }
 ```
 
-> 💡 The `skipData` object contains intro/outro timestamps for the video player to auto-skip.
-</details>
+---
+
+> ## 🗺️ GET Mapper Servers
+
+### Endpoint
+
+```bash
+/mapper-servers
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `malId` | `number` | Yes ✔️ | — | MyAnimeList ID |
+| `slug` | `string` | Yes ✔️ | — | Anime slug |
+| `timestamp` | `number` | Yes ✔️ | — | Current timestamp |
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/mapper-servers?malId=21&slug=one-piece&timestamp=1717900000"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/mapper-servers", {
+  params: { malId: 21, slug: "one-piece", timestamp: 1717900000 }
+});
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "provider": "gogoanime",
+      "type": "sub",
+      "url": "https://embtaku.pro/embed?id=...",
+      "download": "https://gogodl.net/download?id=..."
+    },
+    {
+      "provider": "gogoanime",
+      "type": "dub",
+      "url": "https://embtaku.pro/embed?id=...",
+      "download": "https://gogodl.net/download?id=..."
+    }
+  ]
+}
+```
 
 ---
 
@@ -902,9 +1069,19 @@ console.log(resp.data);
 
 ---
 
-### `GET /api/spotlight`
+> ## ⭐ GET Spotlight
 
-Spotlight carousel data — featured anime with posters, descriptions, and ratings.
+### Endpoint
+
+```bash
+/spotlight
+```
+
+#### Parameters
+
+> No parameters required.
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/spotlight"
@@ -916,8 +1093,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/spotlight");
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -956,13 +1132,22 @@ console.log(resp.data);
   ]
 }
 ```
-</details>
 
 ---
 
-### `GET /api/trending`
+> ## 📈 GET Trending
 
-Trending anime — recently updated episodes with sub/dub counts.
+### Endpoint
+
+```bash
+/trending
+```
+
+#### Parameters
+
+> No parameters required.
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/trending"
@@ -974,8 +1159,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/trending");
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1014,55 +1198,24 @@ console.log(resp.data);
   ]
 }
 ```
-</details>
 
 ---
 
-### `GET /api/random`
+> ## 📊 GET Most Popular
 
-Random anime — follows redirect to a random anime page and returns full info.
+### Endpoint
 
 ```bash
-curl "https://anikato.vercel.app/api/random"
+/most-popular
 ```
 
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/random");
-console.log(resp.data);
-```
+#### Parameters
 
-<details>
-<summary>📄 Example Response</summary>
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `page` | `number` | No | `1` | Page number |
 
-```json
-{
-  "success": true,
-  "results": {
-    "slug": "https://anikototv.to/random",
-    "animeId": 2298,
-    "title": "Keep it a Secret from Maria-sama",
-    "japaneseTitle": "Maria-sama ga Miteru 4th Specials",
-    "poster": "https://cdn.anipixcdn.co/thumbnail/f35a2bc72dfdc2aae569a0c7370bd7f5.jpg",
-    "type": "Special",
-    "synopsis": "A series of specials included on the Maria-sama ga Miteru 4th DVD releases.",
-    "rating": "7.23   7.23 /10",
-    "genres": ["Comedy"],
-    "url": "https://anikototv.to/random"
-  }
-}
-```
-</details>
-
----
-
-### `GET /api/most-popular`
-
-Most popular anime with pagination — sorted by view count.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `page` | `number` | `1` | Page number |
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/most-popular?page=1"
@@ -1076,8 +1229,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/most-popular", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1125,17 +1277,24 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/new-release`
+> ## 🆕 GET New Release
 
-Newly released anime with pagination.
+### Endpoint
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `page` | `number` | `1` | Page number |
+```bash
+/new-release
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `page` | `number` | No | `1` | Page number |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/new-release?page=1"
@@ -1149,8 +1308,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/new-release", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1165,13 +1323,68 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/trending-sidebar`
+> ## ✨ GET Newly Added
 
-Sidebar data — trending (day/week/month) + latest episodes for widget display.
+### Endpoint
+
+```bash
+/newly-added
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `page` | `number` | No | `1` | Page number |
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/newly-added?page=1"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/newly-added", {
+  params: { page: 1 }
+});
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": {
+    "totalPages": 293,
+    "data": [
+      { "slug": "digimon-beatbreak-u2o7s/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/12d6b5e5a791029b893bf3f08733aec2.jpg", "title": "Digimon Beatbreak", "japaneseTitle": "Digimon Beatbreak", "sub": 34, "dub": 25, "total": 0, "type": "TV" },
+      { "slug": "ghost-concert-missing-songs-ndxfn/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/21c1f9ec2efafedf9e2bd429875471c0.jpg", "title": "Ghost Concert: Missing Songs", "japaneseTitle": "Ghost Concert: Missing Songs", "sub": 10, "dub": 0, "total": 12, "type": "TV" },
+      { "slug": "one-piece-odmau/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/f899139df5e1059396431415e770c6dd.jpg", "title": "One Piece", "japaneseTitle": "One Piece", "sub": 1165, "dub": 1133, "total": 0, "type": "TV" }
+    ]
+  }
+}
+```
+
+---
+
+> ## 📋 GET Trending Sidebar
+
+### Endpoint
+
+```bash
+/trending-sidebar
+```
+
+#### Parameters
+
+> No parameters required.
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/trending-sidebar"
@@ -1183,8 +1396,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/trending-sidebar");
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1213,160 +1425,25 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/newly-added`
+> ## 📂 GET Categories Info (genre, type, status, AZ list)
 
-Recently added anime with pagination.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `page` | `number` | `1` | Page number |
+### Genre Endpoint
 
 ```bash
-curl "https://anikato.vercel.app/api/newly-added?page=1"
+/genre/:name
 ```
 
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/newly-added", {
-  params: { page: 1 }
-});
-console.log(resp.data);
-```
+#### Parameters
 
-<details>
-<summary>📄 Example Response</summary>
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `name` | `string` | Yes ✔️ | — | Genre slug (e.g. `action`, `comedy`) |
+| `page` | `number` | No | `1` | Page number |
 
-```json
-{
-  "success": true,
-  "results": {
-    "totalPages": 293,
-    "data": [
-      { "slug": "digimon-beatbreak-u2o7s/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/12d6b5e5a791029b893bf3f08733aec2.jpg", "title": "Digimon Beatbreak", "japaneseTitle": "Digimon Beatbreak", "sub": 34, "dub": 25, "total": 0, "type": "TV" },
-      { "slug": "ghost-concert-missing-songs-ndxfn/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/21c1f9ec2efafedf9e2bd429875471c0.jpg", "title": "Ghost Concert: Missing Songs", "japaneseTitle": "Ghost Concert: Missing Songs", "sub": 10, "dub": 0, "total": 12, "type": "TV" },
-      { "slug": "one-piece-odmau/ep-1", "poster": "https://cdn.anipixcdn.co/thumbnail/f899139df5e1059396431415e770c6dd.jpg", "title": "One Piece", "japaneseTitle": "One Piece", "sub": 1165, "dub": 1133, "total": 0, "type": "TV" }
-    ]
-  }
-}
-```
-</details>
-
----
-
-### `GET /api/schedule`
-
-Anime schedule for a specific date. Returns an array of anime airing on that date with episode info, or an empty array if no schedule data is available.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `date` | `string` | **required** | Date in `YYYY-MM-DD` format |
-
-```bash
-curl "https://anikato.vercel.app/api/schedule?date=2026-06-08"
-```
-
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/schedule", {
-  params: { date: "2026-06-08" }
-});
-console.log(resp.data);
-```
-
-<details>
-<summary>📄 Example Response</summary>
-
-```json
-{
-  "success": true,
-  "results": [
-    {
-      "slug": "anime-slug-xyz/ep-1",
-      "title": "Anime Title",
-      "episode": "Ep 1",
-      "japaneseTitle": "Japanese Title",
-      "type": "TV",
-      "subs": 1,
-      "dubs": 0
-    }
-  ]
-}
-```
-
-> 💡 If no anime are scheduled for the given date, the response will be `{"success": true, "results": []}`.
-</details>
-
----
-
-### `GET /api/filter`
-
-Advanced filtering with multiple criteria. Requires `keyword` parameter (use empty string for unfiltered).
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `keyword` | `string` | `""` | Search keyword (required by site) |
-| `genre` | `string` | — | Comma-separated genre slugs |
-| `type` | `string` | — | Comma-separated types |
-| `status` | `string` | — | Comma-separated statuses |
-| `language` | `string` | — | `sub`, `dub` |
-| `rating` | `string` | — | `g`, `pg`, `pg-13`, `r`, `r+`, `rx` |
-| `sort` | `string` | — | `latest-updated`, `score`, `name-az`, etc. |
-| `season` | `string` | — | `spring`, `summer`, `fall`, `winter` |
-| `year` | `number` | — | e.g. `2026` |
-| `page` | `number` | `1` | Page number |
-
-**Available Genres:** `action`, `adventure`, `cars`, `comedy`, `dementia`, `demons`, `drama`, `ecchi`, `fantasy`, `game`, `harem`, `historical`, `horror`, `isekai`, `josei`, `kids`, `magic`, `mahou-shoujo`, `martial-arts`, `mecha`, `military`, `music`, `mystery`, `parody`, `police`, `psychological`, `romance`, `samurai`, `school`, `sci-fi`, `seinen`, `shoujo`, `shoujo-ai`, `shounen`, `shounen-ai`, `slice-of-life`, `space`, `sports`, `super-power`, `supernatural`, `thriller`, `unknown`, `vampire`
-
-**Available Types:** `movie`, `music`, `ona`, `ova`, `special`, `tv`
-
-**Available Statuses:** `currently-airing`, `finished-airing`, `not-yet-aired`
-
-**Available Sorts:** `default`, `latest-updated`, `latest-added`, `score`, `name-az`, `release-date`, `most-viewed`, `number_of_episodes`
-
-```bash
-curl "https://anikato.vercel.app/api/filter?genre=action&type=tv&page=1"
-```
-
-```javascript
-import axios from "axios";
-const resp = await axios.get("https://anikato.vercel.app/api/filter", {
-  params: { genre: "action", type: "tv", page: 1 }
-});
-console.log(resp.data);
-```
-
-<details>
-<summary>📄 Example Response</summary>
-
-```json
-{
-  "success": true,
-  "results": {
-    "totalPages": 114,
-    "data": [
-      { "slug": "loner-life-in-another-world-g9rqp/ep-1", "animeId": "2", "poster": "https://cdn.anipixcdn.co/thumbnail/63ea2c642aaee001d818604fe1d9a811.jpg", "title": "Loner Life in Another World", "japaneseTitle": "Hitoribocchi no Isekai Kouryaku", "sub": 12, "dub": 12, "total": 12, "type": "TV", "rating": "6.23" },
-      { "slug": "dandadan-lzcmw/ep-1", "animeId": "4", "poster": "https://cdn.anipixcdn.co/thumbnail/56705e032d3b13b849ca05bb7799013e.jpg", "title": "Dandadan", "japaneseTitle": "Dandadan", "sub": 12, "dub": 12, "total": 12, "type": "TV", "rating": "8.75" },
-      { "slug": "my-hero-academia-kuzfp/ep-1", "animeId": "6", "poster": "https://cdn.anipixcdn.co/thumbnail/5737c6ec2e0716f3d8a7a5c4e0de0d9a.jpg", "title": "My Hero Academia", "japaneseTitle": "Boku no Hero Academia", "sub": 13, "dub": 13, "total": 13, "type": "TV", "rating": "8.18" }
-    ]
-  }
-}
-```
-</details>
-
----
-
-### `GET /api/genre/:name`
-
-Browse anime by genre.
-
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `name` | `string` | **required** | Genre slug (e.g. `action`, `comedy`) |
-| `page` | `number` | `1` | Page number |
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/genre/action?page=1"
@@ -1380,8 +1457,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/genre/action", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1396,18 +1472,23 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/type/:name`
+### Type Endpoint
 
-Browse anime by type.
+```bash
+/type/:name
+```
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `name` | `string` | **required** | Type slug (`tv`, `movie`, `ova`, `ona`, `special`) |
-| `page` | `number` | `1` | Page number |
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `name` | `string` | Yes ✔️ | — | Type slug (`tv`, `movie`, `ova`, `ona`, `special`) |
+| `page` | `number` | No | `1` | Page number |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/type/movie?page=1"
@@ -1421,8 +1502,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/type/movie", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1450,18 +1530,23 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/status/:name`
+### Status Endpoint
 
-Browse anime by airing status.
+```bash
+/status/:name
+```
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `name` | `string` | **required** | Status slug |
-| `page` | `number` | `1` | Page number |
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `name` | `string` | Yes ✔️ | — | Status slug (`currently-airing`, `finished-airing`, `not-yet-aired`) |
+| `page` | `number` | No | `1` | Page number |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/status/currently-airing?page=1"
@@ -1475,8 +1560,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/status/currently-ai
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1503,18 +1587,23 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/az-list/:letter`
+### AZ List Endpoint
 
-Browse anime alphabetically.
+```bash
+/az-list/:letter
+```
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `letter` | `string` | **required** | Letter (`a`-`z`, `0-9`, `other`, `all`) |
-| `page` | `number` | `1` | Page number |
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `letter` | `string` | Yes ✔️ | — | Letter (`a`-`z`, `0-9`, `other`, `all`) |
+| `page` | `number` | No | `1` | Page number |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/az-list/a?page=1"
@@ -1528,8 +1617,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/az-list/a", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1545,17 +1633,85 @@ console.log(resp.data);
   }
 }
 ```
-</details>
 
 ---
 
-### `GET /api/suggestions`
+### Filter Endpoint
 
-Search suggestions for autocomplete (returns max 10 results).
+```bash
+/filter
+```
 
-| Param | Type | Default | Description |
-|:---|:---|:---|:---|
-| `keyword` | `string` | **required** | Search query |
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `keyword` | `string` | No | `""` | Search keyword (required by site) |
+| `genre` | `string` | No | — | Comma-separated genre slugs |
+| `type` | `string` | No | — | Comma-separated types |
+| `status` | `string` | No | — | Comma-separated statuses |
+| `language` | `string` | No | — | `sub`, `dub` |
+| `rating` | `string` | No | — | `g`, `pg`, `pg-13`, `r`, `r+`, `rx` |
+| `sort` | `string` | No | — | `latest-updated`, `score`, `name-az`, etc. |
+| `season` | `string` | No | — | `spring`, `summer`, `fall`, `winter` |
+| `year` | `number` | No | — | e.g. `2026` |
+| `page` | `number` | No | `1` | Page number |
+
+**Available Genres:** `action`, `adventure`, `cars`, `comedy`, `dementia`, `demons`, `drama`, `ecchi`, `fantasy`, `game`, `harem`, `historical`, `horror`, `isekai`, `josei`, `kids`, `magic`, `mahou-shoujo`, `martial-arts`, `mecha`, `military`, `music`, `mystery`, `parody`, `police`, `psychological`, `romance`, `samurai`, `school`, `sci-fi`, `seinen`, `shoujo`, `shoujo-ai`, `shounen`, `shounen-ai`, `slice-of-life`, `space`, `sports`, `super-power`, `supernatural`, `thriller`, `unknown`, `vampire`
+
+**Available Types:** `movie`, `music`, `ona`, `ova`, `special`, `tv`
+
+**Available Statuses:** `currently-airing`, `finished-airing`, `not-yet-aired`
+
+**Available Sorts:** `default`, `latest-updated`, `latest-added`, `score`, `name-az`, `release-date`, `most-viewed`, `number_of_episodes`
+
+#### Example of request
+
+```bash
+curl "https://anikato.vercel.app/api/filter?genre=action&type=tv&page=1"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/filter", {
+  params: { genre: "action", type: "tv", page: 1 }
+});
+console.log(resp.data);
+```
+
+#### Sample Response
+
+```json
+{
+  "success": true,
+  "results": {
+    "totalPages": 114,
+    "data": [
+      { "slug": "loner-life-in-another-world-g9rqp/ep-1", "animeId": "2", "poster": "https://cdn.anipixcdn.co/thumbnail/63ea2c642aaee001d818604fe1d9a811.jpg", "title": "Loner Life in Another World", "japaneseTitle": "Hitoribocchi no Isekai Kouryaku", "sub": 12, "dub": 12, "total": 12, "type": "TV", "rating": "6.23" },
+      { "slug": "dandadan-lzcmw/ep-1", "animeId": "4", "poster": "https://cdn.anipixcdn.co/thumbnail/56705e032d3b13b849ca05bb7799013e.jpg", "title": "Dandadan", "japaneseTitle": "Dandadan", "sub": 12, "dub": 12, "total": 12, "type": "TV", "rating": "8.75" },
+      { "slug": "my-hero-academia-kuzfp/ep-1", "animeId": "6", "poster": "https://cdn.anipixcdn.co/thumbnail/5737c6ec2e0716f3d8a7a5c4e0de0d9a.jpg", "title": "My Hero Academia", "japaneseTitle": "Boku no Hero Academia", "sub": 13, "dub": 13, "total": 13, "type": "TV", "rating": "8.18" }
+    ]
+  }
+}
+```
+
+---
+
+> ## 💡 GET Search Suggestions
+
+### Endpoint
+
+```bash
+/suggestions
+```
+
+#### Parameters
+
+| Parameter | Type | Mandatory | Default | Description |
+| :-------: | :--: | :-------: | :-----: | :---------: |
+| `keyword` | `string` | Yes ✔️ | — | Search query |
+
+#### Example of request
 
 ```bash
 curl "https://anikato.vercel.app/api/suggestions?keyword=naruto"
@@ -1569,8 +1725,7 @@ const resp = await axios.get("https://anikato.vercel.app/api/suggestions", {
 console.log(resp.data);
 ```
 
-<details>
-<summary>📄 Example Response</summary>
+#### Sample Response
 
 ```json
 {
@@ -1582,7 +1737,6 @@ console.log(resp.data);
   ]
 }
 ```
-</details>
 
 ---
 
