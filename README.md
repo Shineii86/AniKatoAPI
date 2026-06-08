@@ -445,6 +445,35 @@ curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25JaFlCMnZOe..."
 curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9BRTZPbz..."
 ```
 
+### Dub & Sub Switch
+
+Servers have a `type` field — use it to pick sub or dub:
+
+```json
+// Step 2 response
+{
+  "results": [
+    { "type": "sub", "name": "HD-1", "link_id": "MTF1..." },
+    { "type": "sub", "name": "Vidstream-2", "link_id": "MTF1..." },
+    { "type": "dub", "name": "HD-1", "link_id": "MTF1..." },
+    { "type": "dub", "name": "Vidstream-2", "link_id": "MTF1..." }
+  ]
+}
+```
+
+```javascript
+// Pick dub or sub
+const servers = await fetch('/api/servers?ids=...').then(r => r.json());
+const dubServer = servers.results.find(s => s.type === 'dub');
+const subServer = servers.results.find(s => s.type === 'sub');
+
+// Get stream URL
+const stream = await fetch(`/api/stream?id=${dubServer.link_id}`).then(r => r.json());
+// stream.results.url = "https://megaplay.buzz/stream/s-5/169837/dub"
+```
+
+> **Note:** Not all anime have dub. Check `sub`/`dub` counts in search or home response.
+
 ---
 
 > ## 🏠 GET Home Info
