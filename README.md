@@ -290,8 +290,22 @@ flowchart TD
 ```
 AniKotoAPI/
 ├── 📂 public/                            # 🌐 Static files
-│   ├── 📄 index.html                     #    📖 API documentation page
-│   └── 📄 404.html                       #    ❌ Custom 404 error page
+│   ├── 📄 index.html                     #    📖 Premium landing page (SVG icons, live console)
+│   ├── 📄 404.html                       #    ❌ Custom 404 error page (glitch animation)
+│   ├── 📄 tos.html                       #    📋 Terms of Service page
+│   ├── 📄 privacy.html                   #    🔒 Privacy Policy page
+│   ├── 📄 manifest.json                  #    📱 PWA manifest (theme: #A855F7)
+│   ├── 📄 robots.txt                     #    🤖 Crawler directives
+│   ├── 📄 sitemap.xml                    #    🗺️ Sitemap (4 pages)
+│   ├── 📄 og-image.svg                   #    🖼️ SVG Open Graph image
+│   │
+│   ├── 📂 docs/                          #    📚 API documentation
+│   │   ├── 📄 index.md                   #       Overview, quick start
+│   │   ├── 📄 endpoints.md               #       Full API reference (27 endpoints)
+│   │   ├── 📄 streaming.md               #       Streaming flow guide
+│   │   ├── 📄 examples.md                #       Code examples (cURL, JS, Python)
+│   │   └── 📄 architecture.md            #       Project structure, tech stack
+│   │
 │
 ├── 📂 src/                               # ⚙️ Core logic
 │   ├── 📂 configs/                       #    🔧 Configuration files
