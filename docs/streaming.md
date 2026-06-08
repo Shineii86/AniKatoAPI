@@ -1,23 +1,25 @@
 # Streaming Flow Guide
 
-> How to get streaming URLs from AniKotoAPI.
+This guide explains how to get streaming URLs from AniKotoAPI in 3 steps.
 
 ## Overview
 
-The streaming flow involves 3 steps:
+```
+Step 1: Get Episodes   →  /api/episodes/:slug
+Step 2: Get Servers    →  /api/servers?ids={server_ids}
+Step 3: Get Stream URL →  /api/stream?id={link_id}
+```
 
-```
-1. Get episodes     → /api/episodes/{slug}
-2. Get servers      → /api/servers?ids={server_ids}
-3. Get stream URL   → /api/stream?id={link_id}
-```
+---
 
 ## Step 1: Get Episodes
 
-First, get the episode list for an anime. This returns episode data including `server_ids` needed for the next step.
+Each anime has multiple episodes. Fetch the episode list with the anime slug.
+
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/episodes/naruto-shippuden"
+curl "https://anikototvapi.vercel.app/api/episodes/road-of-naruto-ggjw8"
 ```
 
 **Response:**
@@ -26,33 +28,37 @@ curl "https://anikototvapi.vercel.app/api/episodes/naruto-shippuden"
 {
   "success": true,
   "results": {
-    "animeId": 12345,
-    "slug": "naruto-shippuden",
-    "totalEpisodes": 500,
+    "animeId": "7174",
+    "totalEpisodes": 1,
     "episodes": [
       {
         "id": "110289",
         "episode_no": 1,
-        "server_ids": "SlNVT25JaFlCMnZOeXZ2aG5t...",
+        "slug": "1",
+        "title": "",
+        "active": true,
+        "href": "#",
+        "server_ids": "SlNVT25JaFlCMnZOeXZ2aG5takIxL2EybGl4TzJoNE1pN3JXdFNlODVocWtTckt1SFR0YUxrNzNhanQ2MEJoVG9UUEZNeWJOMm1uUThpYjNxejhhUEZWMitnNFFtTUNMYjBTc1FJZjZNNFZPNm5LMlVuTnpOU25ScUI1dHVGczM0UzluZ2xITG5qbExabnBDdGphY0VRPT0",
         "timestamp": "1729249503",
-        "mal_id": "1735"
+        "mal_id": "53236"
       }
     ]
   }
 }
 ```
 
-**Key fields:**
-- `server_ids` — Base64-encoded string needed for the servers endpoint
-- `timestamp` — Used for the mapper API
-- `mal_id` — MyAnimeList ID for the anime
+> **Key field:** `server_ids` — Pass this to the next step.
+
+---
 
 ## Step 2: Get Servers
 
-Use the `server_ids` from step 1 to get available streaming servers.
+Each episode has multiple servers. Use the `server_ids` from Step 1.
+
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25JaFlCMnZOeXZ2aG5t..."
+curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25JaFlCMnZOeXZ2aG5takIxL2EybGl4TzJoNE1pN3JXdFNlODVocWtTckt1SFR0YUxrNzNhanQ2MEJoVG9UUEZNeWJOMm1uUThpYjNxejhhUEZWMitnNFFtTUNMYjBTc1FJZjZNNFZPNm5LMlVuTnpOU25ScUI1dHVGczM0UzluZ2xITG5qbExabnBDdGphY0VRPT0"
 ```
 
 **Response:**
@@ -64,42 +70,35 @@ curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25JaFlCMnZOeXZ2aG5t..
     {
       "type": "sub",
       "ep_id": "110289",
-      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZr...",
-      "cmid": "animixplay-xxxxx",
-      "sv_id": "323",
+      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOHZGS2FSWVgvbVJraVpIV1dQRjRoN01hOFUvYmxsWXFYNGtiR0h5OWdGQWc9PQ",
+      "cmid": "animixplay-fqs",
+      "sv_id": "1",
       "name": "HD-1"
     },
     {
       "type": "sub",
       "ep_id": "110289",
-      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZr...",
-      "cmid": "animixplay-xxxxx",
-      "sv_id": "e54",
+      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOEZ4cFNpMDdQbnV1S3dNdklpRkhWbzRsVmgxSGx4YWx3LytPcnZXU0RCVHc9PQ",
+      "cmid": "animixplay-fqs",
+      "sv_id": "2",
       "name": "Vidstream-2"
-    },
-    {
-      "type": "dub",
-      "ep_id": "110289",
-      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZr...",
-      "cmid": "animixplay-xxxxx",
-      "sv_id": "a41",
-      "name": "VidCloud-1"
     }
   ]
 }
 ```
 
-**Key fields:**
-- `type` — "sub" or "dub"
-- `link_id` — ID needed for the stream endpoint
-- `name` — Server name (HD-1, Vidstream-2, etc.)
+> **Key field:** `link_id` — Pick a server and pass its `link_id` to the next step.
+
+---
 
 ## Step 3: Get Stream URL
 
-Use the `link_id` from step 2 to get the actual streaming URL.
+Get the actual streaming URL using the `link_id` from Step 2.
+
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9BRTZPbzJJRElFZUZr..."
+curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOHZGS2FSWVgvbVJraVpIV1dQRjRoN01hOFUvYmxsWXFYNGtiR0h5OWdGQWc9PQ"
 ```
 
 **Response:**
@@ -108,7 +107,7 @@ curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9BRTZPbzJJRElFZUZr
 {
   "success": true,
   "results": {
-    "linkId": "MTF1dkFtaW9BRTZPbzJJRElFZUZr...",
+    "linkId": "MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOHZGS2FSWVgvbVJraVpIV1dQRjRoN01hOFUvYmxsWXFYNGtiR0h5OWdGQWc9PQ",
     "url": "https://megaplay.buzz/stream/s-5/94736/sub",
     "skipData": {
       "intro": [0, 0],
@@ -118,96 +117,137 @@ curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9BRTZPbzJJRElFZUZr
 }
 ```
 
-**Key fields:**
-- `url` — Direct streaming URL (m3u8 or mp4)
-- `skipData` — Intro/outro timestamps for skipping
+> **Done!** Use `results.url` in your video player.
 
-## Complete Example (JavaScript)
+---
+
+## JavaScript Example
 
 ```javascript
-const BASE = "https://anikototvapi.vercel.app/api";
-
-async function getStreamUrl(animeSlug, episodeNumber) {
+async function getStreamUrl(animeSlug) {
   // Step 1: Get episodes
-  const epsRes = await fetch(`${BASE}/episodes/${animeSlug}`);
-  const epsData = await epsRes.json();
-  const episode = epsData.results.episodes.find(
-    ep => ep.episode_no === episodeNumber
-  );
+  const episodesRes = await fetch(`https://anikototvapi.vercel.app/api/episodes/${animeSlug}`);
+  const episodesData = await episodesRes.json();
+  const episodes = episodesData.results.episodes;
   
-  if (!episode) throw new Error("Episode not found");
+  if (!episodes || episodes.length === 0) {
+    throw new Error('No episodes found');
+  }
+  
+  // Use first episode's server_ids
+  const serverIds = episodes[0].server_ids;
   
   // Step 2: Get servers
-  const srvRes = await fetch(`${BASE}/servers?ids=${episode.server_ids}`);
-  const srvData = await srvRes.json();
-  const server = srvData.results.find(s => s.type === "sub") || srvData.results[0];
+  const serversRes = await fetch(`https://anikototvapi.vercel.app/api/servers?ids=${serverIds}`);
+  const serversData = await serversRes.json();
+  const servers = serversData.results;
   
-  if (!server) throw new Error("No servers available");
+  if (!servers || servers.length === 0) {
+    throw new Error('No servers found');
+  }
+  
+  // Pick first server (HD-1)
+  const linkId = servers[0].link_id;
   
   // Step 3: Get stream URL
-  const streamRes = await fetch(`${BASE}/stream?id=${server.link_id}`);
+  const streamRes = await fetch(`https://anikototvapi.vercel.app/api/stream?id=${linkId}`);
   const streamData = await streamRes.json();
   
-  return streamData.results;
+  return streamData.results.url; // "https://megaplay.buzz/stream/s-5/94736/sub"
 }
 
 // Usage
-getStreamUrl("naruto-shippuden", 1)
-  .then(stream => {
-    console.log("Stream URL:", stream.url);
-    console.log("Skip intro at:", stream.skipData.intro[0]);
-  });
+getStreamUrl('road-of-naruto-ggjw8')
+  .then(url => console.log('Stream URL:', url))
+  .catch(err => console.error('Error:', err));
 ```
 
-## Complete Example (Python)
+---
+
+## Python Example
 
 ```python
 import requests
 
-BASE = "https://anikototvapi.vercel.app/api"
-
-def get_stream_url(anime_slug, episode_number):
+def get_stream_url(anime_slug):
+    base = "https://anikototvapi.vercel.app/api"
+    
     # Step 1: Get episodes
-    eps_res = requests.get(f"{BASE}/episodes/{anime_slug}")
-    eps_data = eps_res.json()
-    episode = next(
-        ep for ep in eps_data["results"]["episodes"]
-        if ep["episode_no"] == episode_number
-    )
+    episodes_res = requests.get(f"{base}/episodes/{anime_slug}")
+    episodes_data = episodes_res.json()
+    episodes = episodes_data['results']['episodes']
+    
+    if not episodes:
+        raise Exception("No episodes found")
+    
+    server_ids = episodes[0]['server_ids']
     
     # Step 2: Get servers
-    srv_res = requests.get(f"{BASE}/servers", params={"ids": episode["server_ids"]})
-    srv_data = srv_res.json()
-    server = next(
-        (s for s in srv_data["results"] if s["type"] == "sub"),
-        srv_data["results"][0]
-    )
+    servers_res = requests.get(f"{base}/servers", params={"ids": server_ids})
+    servers_data = servers_res.json()
+    servers = servers_data['results']
+    
+    if not servers:
+        raise Exception("No servers found")
+    
+    link_id = servers[0]['link_id']
     
     # Step 3: Get stream URL
-    stream_res = requests.get(f"{BASE}/stream", params={"id": server["link_id"]})
+    stream_res = requests.get(f"{base}/stream", params={"id": link_id})
     stream_data = stream_res.json()
     
-    return stream_data["results"]
+    return stream_data['results']['url']
 
 # Usage
-stream = get_stream_url("naruto-shippuden", 1)
-print(f"Stream URL: {stream['url']}")
-print(f"Skip intro at: {stream['skipData']['intro'][0]}")
+url = get_stream_url('road-of-naruto-ggjw8')
+print(f"Stream URL: {url}")
 ```
 
-## Alternative: Mapper Servers
+---
 
-For additional streaming sources, use the mapper API with `malId`, `slug`, and `timestamp` from the episodes response.
+## Player Integration
 
-```bash
-curl "https://anikototvapi.vercel.app/api/mapper-servers?malId=1735&slug=naruto-shippuden&timestamp=1729249503"
+### HLS.js (HLS Streams)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<video id="player" controls></video>
+
+<script>
+const url = 'https://megaplay.buzz/stream/s-5/94736/sub';
+const video = document.getElementById('player');
+
+if (Hls.isSupported()) {
+  const hls = new Hls();
+  hls.loadSource(url);
+  hls.attachMedia(video);
+}
+</script>
 ```
 
-This returns alternative providers like VidStreaming, Gogoanime, etc.
+### Plyr (MP4 Streams)
 
-## Notes
+```html
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<video id="player" controls></video>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
-- The `url` in stream response is typically an m3u8 playlist or direct mp4 link
-- `skipData` contains intro/outro timestamps in seconds
-- Some servers may require specific headers or referrers to work
-- The mapper API is external and may not always be available
+<script>
+const player = new Plyr('#player');
+player.source = {
+  type: 'video',
+  sources: [{ src: 'STREAM_URL_HERE' }]
+};
+</script>
+```
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "No episodes found" | Check the anime slug is correct (use `/api/search` first) |
+| "No servers found" | The `server_ids` may be invalid, try another episode |
+| Stream URL 403 | Some servers require specific referrer headers |
+| CORS error | Use a proxy or access from server-side |

@@ -8,11 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.7.2] - 2026-06-08
 
 ### Added
-- `docs/` folder with complete API documentation
-  - `docs/index.md` — Overview, quick start, features
-  - `docs/endpoints.md` — Full API reference (27 endpoints documented)
-  - `docs/streaming.md` — Streaming flow guide (3-step process)
-  - `docs/examples.md` — Code examples in cURL, JavaScript, Python, Node.js
+- `docs/` folder with complete API documentation using real live API data
+  - `docs/index.md` — Overview, quick start with real responses
+  - `docs/endpoints.md` — Full API reference (27 endpoints with real data)
+  - `docs/streaming.md` — Streaming flow guide (3-step with real data)
+  - `docs/examples.md` — Code examples in cURL, JavaScript, Python, Node.js (all tested)
+  - `docs/architecture.md` — Project structure, tech stack, design decisions
   - `docs/architecture.md` — Project structure, tech stack, design decisions
 
 ### Fixed

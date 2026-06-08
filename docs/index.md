@@ -11,19 +11,53 @@ AniKotoAPI is a free, open-source REST API that provides anime data scraped from
 ## Quick Start
 
 ```bash
-# Get homepage data
+# Get homepage data (spotlight, trending, top-airing, genres)
 curl https://anikototvapi.vercel.app/api
 
 # Search for anime
 curl "https://anikototvapi.vercel.app/api/search?keyword=naruto"
 
 # Get anime info
-curl "https://anikototvapi.vercel.app/api/info?id=naruto-shippuden"
+curl "https://anikototvapi.vercel.app/api/info?id=road-of-naruto-ggjw8"
+```
+
+**Live Response — Homepage:**
+
+```json
+{
+  "success": true,
+  "results": {
+    "spotlights": [
+      {
+        "slug": "wistoria-wand-and-sword-season-2-dua04",
+        "poster": "https://cdn.anipixcdn.co/background/101f58336250ee0d_1779363645.webp",
+        "title": "Wistoria: Wand and Sword Season 2",
+        "japaneseTitle": "Tsue to Tsurugi no Wistoria Season 2",
+        "rating": "PG-13",
+        "quality": "HD"
+      }
+    ],
+    "trending": [
+      {
+        "slug": "witch-hat-atelier-ikmut/ep-11",
+        "poster": "https://cdn.anipixcdn.co/thumbnail/0412057393e8a45b3ba8b16874b6034d.jpg",
+        "title": "Witch Hat Atelier",
+        "japaneseTitle": "Tongari Boushi no Atelier",
+        "sub": 11,
+        "dub": 11,
+        "total": 13,
+        "type": "TV"
+      }
+    ],
+    "topAiring": [...],
+    "genres": ["Action", "Adventure", "Cars", "Comedy", ...]
+  }
+}
 ```
 
 ## Features
 
-- **24+ Endpoints** — Home, search, info, episodes, streaming, schedule, and more
+- **27 Endpoints** — Home, search, info, episodes, streaming, schedule, and more
 - **No API Key** — Just make requests, no registration needed
 - **In-Memory Cache** — 5-minute TTL for fast responses
 - **CORS Enabled** — Access from any domain
@@ -31,10 +65,10 @@ curl "https://anikototvapi.vercel.app/api/info?id=naruto-shippuden"
 
 ## Documentation
 
-- [API Endpoints Reference](endpoints.md) — Complete endpoint documentation
-- [Streaming Flow Guide](streaming.md) — How to get stream URLs
-- [Code Examples](examples.md) — cURL, JavaScript, Python
-- [Architecture](architecture.md) — Project structure and design
+- [API Endpoints Reference](endpoints.md) — Complete endpoint documentation with real responses
+- [Streaming Flow Guide](streaming.md) — How to get stream URLs step by step
+- [Code Examples](examples.md) — cURL, JavaScript, Python (all tested and working)
+- [Architecture](architecture.md) — Project structure and design decisions
 
 ## Response Format
 

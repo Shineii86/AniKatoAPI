@@ -1,69 +1,12 @@
 # API Endpoints Reference
 
-> Complete documentation for all AniKotoAPI endpoints.
-
-**Base URL:** `https://anikototvapi.vercel.app/api`
+Base URL: `https://anikototvapi.vercel.app/api`
 
 ---
 
-## Table of Contents
+## GET /
 
-- [Home](#home)
-- [Search](#search)
-- [Search Suggestions](#search-suggestions)
-- [Anime Info](#anime-info)
-- [Episodes](#episodes)
-- [Episodes AJAX](#episodes-ajax)
-- [Watch Page](#watch-page)
-- [Stream Info](#stream-info)
-- [Server List](#server-list)
-- [Mapper Servers](#mapper-servers)
-- [Schedule](#schedule)
-- [Spotlight](#spotlight)
-- [Trending](#trending)
-- [Top 10](#top-10)
-- [Most Popular](#most-popular)
-- [New Release](#new-release)
-- [Newly Added](#newly-added)
-- [Random](#random)
-- [Filter](#filter)
-- [Suggestions](#suggestions)
-- [Trending Sidebar](#trending-sidebar)
-- [Seasons](#seasons)
-- [Watch Order](#watch-order)
-- [A-Z List](#a-z-list)
-- [Genre](#genre)
-- [Type](#type)
-- [Status](#status)
-
----
-
-## Home
-
-Get homepage data including spotlight, trending, popular, top-airing, genres, and more.
-
-```
-GET /api/
-```
-
-**Parameters:** None
-
-**Example:**
-
-```bash
-curl https://anikototvapi.vercel.app/api
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api")
-data = r.json()
-```
+Returns homepage data: spotlight anime, trending, top-airing, and genres.
 
 **Response:**
 
@@ -71,47 +14,58 @@ data = r.json()
 {
   "success": true,
   "results": {
-    "spotlight": [...],
-    "trending": [...],
-    "popular": [...],
-    "topAiring": [...],
-    "genres": [...]
+    "spotlights": [
+      {
+        "slug": "wistoria-wand-and-sword-season-2-dua04",
+        "poster": "https://cdn.anipixcdn.co/background/101f58336250ee0d_1779363645.webp",
+        "title": "Wistoria: Wand and Sword Season 2",
+        "japaneseTitle": "Tsue to Tsurugi no Wistoria Season 2",
+        "description": "",
+        "rating": "PG-13",
+        "quality": "HD"
+      }
+    ],
+    "trending": [
+      {
+        "slug": "witch-hat-atelier-ikmut/ep-11",
+        "poster": "https://cdn.anipixcdn.co/thumbnail/0412057393e8a45b3ba8b16874b6034d.jpg",
+        "title": "Witch Hat Atelier",
+        "japaneseTitle": "Tongari Boushi no Atelier",
+        "sub": 11,
+        "dub": 11,
+        "total": 13,
+        "type": "TV"
+      }
+    ],
+    "topAiring": [
+      {
+        "slug": "wistoria-wand-and-sword-season-2-dua04",
+        "poster": "https://cdn.anipixcdn.co/thumbnail/4739d8dbd05dddb73604f6240b83ea68.jpg",
+        "title": "Wistoria: Wand and Sword Season 2",
+        "sub": 9,
+        "dub": 7,
+        "type": ""
+      }
+    ],
+    "genres": ["Action", "Adventure", "Cars", "Comedy", "Dementia", "Demons", "Drama", "Ecchi", "Fantasy", "Game", "Harem", "Historical", "Horror", "Isekai", "Josei", "Kids", "Magic", "Martial Arts", "Mecha", "Military", "Music", "Mystery", "Parody", "Police", "Psychological", "Romance", "Samurai", "School", "Sci-Fi", "Seinen", "Shoujo", "Shounen", "Slice of Life", "Space", "Sports", "Super Power", "Supernatural", "Thriller", "Vampire"]
   }
 }
 ```
 
 ---
 
-## Search
+## GET /search
 
-Search for anime by keyword with pagination.
+Search for anime by keyword.
 
-```
-GET /api/search
-```
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `keyword` | string | Yes | Search query |
 
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `keyword` | string | Yes | — | Search query |
-| `page` | number | No | 1 | Page number |
-
-**Example:**
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/search?keyword=naruto&page=1"
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/search?keyword=naruto");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api/search", params={"keyword": "naruto"})
-data = r.json()
+curl "https://anikototvapi.vercel.app/api/search?keyword=naruto"
 ```
 
 **Response:**
@@ -120,15 +74,20 @@ data = r.json()
 {
   "success": true,
   "results": {
-    "totalPages": 10,
+    "totalPages": 1,
     "data": [
       {
-        "title": "Naruto",
-        "id": "naruto-xxxxx",
-        "slug": "naruto-xxxxx/ep-1",
-        "image": "https://...",
-        "type": "TV",
-        "genres": ["Action", "Adventure"]
+        "slug": "road-of-naruto-ggjw8/ep-1",
+        "animeId": "7174",
+        "poster": "https://cdn.anipixcdn.co/thumbnail/abfd676ad3a01f1e8860fecff9f5b8e0.jpg",
+        "title": "Road of Naruto",
+        "japaneseTitle": "Road of Naruto",
+        "sub": 1,
+        "dub": 0,
+        "total": 0,
+        "type": "ONA",
+        "rating": "8.55",
+        "genres": ["Action", "Fantasy", "Shounen"]
       }
     ]
   }
@@ -137,80 +96,18 @@ data = r.json()
 
 ---
 
-## Search Suggestions
+## GET /info
 
-Get autocomplete suggestions for search queries.
+Get detailed info about an anime.
 
-```
-GET /api/search/suggest
-```
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Anime slug (e.g., `road-of-naruto-ggjw8`) |
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `keyword` | string | Yes | Partial search query |
-
-**Example:**
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/search/suggest?keyword=dea"
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/search/suggest?keyword=dea");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api/search/suggest", params={"keyword": "dea"})
-data = r.json()
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "results": [
-    { "title": "Death Note", "slug": "death-note-xxxxx" },
-    { "title": "Deadman Wonderland", "slug": "deadman-wonderland-xxxxx" }
-  ]
-}
-```
-
----
-
-## Anime Info
-
-Get detailed information about a specific anime.
-
-```
-GET /api/info
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | string | Yes | Anime slug |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/info?id=naruto-shippuden"
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/info?id=naruto-shippuden");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api/info", params={"id": "naruto-shippuden"})
-data = r.json()
+curl "https://anikototvapi.vercel.app/api/info?id=road-of-naruto-ggjw8"
 ```
 
 **Response:**
@@ -219,52 +116,31 @@ data = r.json()
 {
   "success": true,
   "results": {
-    "title": "Naruto: Shippuuden",
-    "japaneseTitle": "ナルト- 疾風伝",
-    "image": "https://...",
-    "synopsis": "...",
-    "type": "TV",
+    "title": "Road of Naruto",
+    "type": "ONA",
     "status": "Finished Airing",
-    "totalEpisodes": 500,
-    "genres": ["Action", "Adventure"],
-    "malId": 1735,
-    "relations": [...],
-    "recommendations": [...]
+    "totalEpisodes": null,
+    "synopsis": "In celebration of 20 years of Naruto, Studio Pierrot posted an anniversary PV on their YouTube channel...",
+    "malId": "53236",
+    "genres": ["Action", "Fantasy", "Shounen"]
   }
 }
 ```
 
 ---
 
-## Episodes
+## GET /episodes
 
-Get the episode list for an anime.
+Get episode list for an anime.
 
-```
-GET /api/episodes/:id
-```
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Anime slug |
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | string | Yes | Anime slug (path parameter) |
-
-**Example:**
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/episodes/naruto-shippuden"
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/episodes/naruto-shippuden");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api/episodes/naruto-shippuden")
-data = r.json()
+curl "https://anikototvapi.vercel.app/api/episodes/road-of-naruto-ggjw8"
 ```
 
 **Response:**
@@ -273,9 +149,8 @@ data = r.json()
 {
   "success": true,
   "results": {
-    "animeId": 12345,
-    "slug": "naruto-shippuden",
-    "totalEpisodes": 500,
+    "animeId": "7174",
+    "totalEpisodes": 1,
     "episodes": [
       {
         "id": "110289",
@@ -284,91 +159,77 @@ data = r.json()
         "title": "",
         "active": true,
         "href": "#",
-        "server_ids": "SlNVT25...",
+        "server_ids": "SlNVT25JaFlCMnZOeXZ2aG5takIxL2EybGl4TzJoNE1pN3JXdFNlODVocWtTckt1SFR0YUxrNzNhanQ2MEJoVG9UUEZNeWJOMm1uUThpYjNxejhhUEZWMitnNFFtTUNMYjBTc1FJZjZNNFZPNm5LMlVuTnpOU25ScUI1dHVGczM0UzluZ2xITG5qbExabnBDdGphY0VRPT0",
         "timestamp": "1729249503",
-        "mal_id": "1735"
+        "mal_id": "53236"
       }
     ]
   }
 }
 ```
 
----
-
-## Episodes AJAX
-
-Get the AJAX-loaded episode list (same data as episodes, but fetched via AJAX endpoint).
-
-```
-GET /api/episodes-ajax/:id
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | string | Yes | Anime ID (numeric, from episodes response) |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/episodes-ajax/12345"
-```
+> **Important:** The `server_ids` field is needed to fetch servers. Pass it to the `/servers` endpoint.
 
 ---
 
-## Watch Page
+## GET /servers
 
-Get watch page data for a specific episode.
+Get available servers for an episode.
 
-```
-GET /api/watch
-```
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ids` | string | Yes | `server_ids` from `/episodes` response |
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | string | Yes | Anime slug |
-| `ep` | number | No | Episode number |
-
-**Example:**
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/watch?id=naruto-shippuden&ep=1"
+curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25JaFlCMnZOeXZ2aG5takIx..."
 ```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "type": "sub",
+      "ep_id": "110289",
+      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOHZGS2FSWVgvbVJraVpIV1dQRjRoN01hOFUvYmxsWXFYNGtiR0h5OWdGQWc9PQ",
+      "cmid": "animixplay-fqs",
+      "sv_id": "1",
+      "ep_id": "110289",
+      "name": "HD-1"
+    },
+    {
+      "type": "sub",
+      "ep_id": "110289",
+      "link_id": "MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOEZ4cFNpMDdQbnV1S3dNdklpRkhWbzRsVmgxSGx4YWx3LytPcnZXU0RCVHc9PQ",
+      "cmid": "animixplay-fqs",
+      "sv_id": "2",
+      "ep_id": "110289",
+      "name": "Vidstream-2"
+    }
+  ]
+}
+```
+
+> **Note:** There are usually 3 servers: HD-1 (sub), Vidstream-2 (sub), VidCloud-1 (sub).
 
 ---
 
-## Stream Info
+## GET /stream
 
-Get the streaming URL and metadata for an episode server.
+Get streaming URL for a server.
 
-```
-GET /api/stream
-```
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | `link_id` from `/servers` response |
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | string | Yes | Server link ID (from servers response) |
-
-**Example:**
+**Request:**
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9..."
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9...");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api/stream", params={"id": "MTF1dkFtaW9..."})
-data = r.json()
+curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOHZGS2FSWVgvbVJraVpIV1dQRjRoN01hOFUvYmxsWXFYNGtiR0h5OWdGQWc9PQ"
 ```
 
 **Response:**
@@ -377,7 +238,7 @@ data = r.json()
 {
   "success": true,
   "results": {
-    "linkId": "MTF1dkFtaW9...",
+    "linkId": "MTF1dkFtaW9BRTZPbzJJRElFZUZrOWdjeldjOERLaWNMMXFNbVB3WUJqOHZGS2FSWVgvbVJraVpIV1dQRjRoN01hOFUvYmxsWXFYNGtiR0h5OWdGQWc9PQ",
     "url": "https://megaplay.buzz/stream/s-5/94736/sub",
     "skipData": {
       "intro": [0, 0],
@@ -387,446 +248,175 @@ data = r.json()
 }
 ```
 
----
-
-## Server List
-
-Get available streaming servers for an episode.
-
-```
-GET /api/servers
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `ids` | string | Yes | Server IDs (from episodes response `server_ids` field) |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25..."
-```
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/servers?ids=SlNVT25...");
-const data = await res.json();
-```
-
-```python
-import requests
-r = requests.get("https://anikototvapi.vercel.app/api/servers", params={"ids": "SlNVT25..."})
-data = r.json()
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "results": [
-    {
-      "type": "sub",
-      "ep_id": "110289",
-      "link_id": "MTF1dkFtaW9...",
-      "cmid": "animixplay-xxxxx",
-      "sv_id": "323",
-      "name": "HD-1"
-    },
-    {
-      "type": "sub",
-      "ep_id": "110289",
-      "link_id": "MTF1dkFtaW9...",
-      "cmid": "animixplay-xxxxx",
-      "sv_id": "e54",
-      "name": "Vidstream-2"
-    }
-  ]
-}
-```
+> **Note:** The `url` is a direct stream link. Use it with a video player like HLS.js or Plyr.
 
 ---
 
-## Mapper Servers
+## GET /suggestions
 
-Get alternative streaming servers from the nekostream mapper API.
+Get anime suggestions based on keyword.
 
-```
-GET /api/mapper-servers
-```
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `keyword` | string | Yes | Partial title for suggestions |
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `malId` | number | Yes | MyAnimeList ID |
-| `slug` | string | Yes | Anime slug |
-| `timestamp` | string | Yes | Episode timestamp |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/mapper-servers?malId=1735&slug=naruto-shippuden&timestamp=1729249503"
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "results": [
-    {
-      "provider": "vidstreaming",
-      "type": "sub",
-      "url": "https://...",
-      "download": "https://..."
-    }
-  ]
-}
-```
-
----
-
-## Schedule
-
-Get anime airing schedule.
-
-```
-GET /api/schedule
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `date` | string | No | Today | Date in YYYY-MM-DD format |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/schedule"
-curl "https://anikototvapi.vercel.app/api/schedule?date=2026-06-08"
-```
-
----
-
-## Spotlight
-
-Get spotlight/featured anime carousel.
-
-```
-GET /api/spotlight
-```
-
-**Parameters:** None
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/spotlight"
-```
-
----
-
-## Trending
-
-Get currently trending anime.
-
-```
-GET /api/trending
-```
-
-**Parameters:** None
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/trending"
-```
-
----
-
-## Top 10
-
-Get top 10 ranked anime (today, week, month).
-
-```
-GET /api/top-ten
-```
-
-**Parameters:** None
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/top-ten"
-```
-
----
-
-## Most Popular
-
-Get most popular anime list.
-
-```
-GET /api/most-popular
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `page` | number | No | 1 | Page number |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/most-popular?page=1"
-```
-
----
-
-## New Release
-
-Get recently released episodes.
-
-```
-GET /api/new-release
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `page` | number | No | 1 | Page number |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/new-release"
-```
-
----
-
-## Newly Added
-
-Get newly added anime series.
-
-```
-GET /api/newly-added
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `page` | number | No | 1 | Page number |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/newly-added"
-```
-
----
-
-## Random
-
-Get random anime information.
-
-```
-GET /api/random
-```
-
-**Parameters:** None
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/random"
-```
-
----
-
-## Filter
-
-Filter anime by genre, type, status, season, and more.
-
-```
-GET /api/filter
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `keyword` | string | Yes | Search keyword (can be empty) |
-| `genre[]` | number | No | Genre IDs (multiple supported) |
-| `type[]` | number | No | Type IDs (multiple supported) |
-| `status[]` | number | No | Status IDs (multiple supported) |
-| `sort` | string | No | Sort order |
-| `season` | string | No | Season |
-| `page` | number | No | Page number |
-
-**Example:**
-
-```bash
-curl "https://anikototvapi.vercel.app/api/filter?keyword=&genre[]=1&genre[]=4"
-```
-
----
-
-## Suggestions
-
-Get anime suggestions by keyword.
-
-```
-GET /api/suggestions
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `keyword` | string | Yes | Search keyword |
-
-**Example:**
+**Request:**
 
 ```bash
 curl "https://anikototvapi.vercel.app/api/suggestions?keyword=naruto"
 ```
 
+**Response:**
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "slug": "road-of-naruto-ggjw8/ep-1",
+      "poster": "https://cdn.anipixcdn.co/thumbnail/abfd676ad3a01f1e8860fecff9f5b8e0.jpg",
+      "title": "Road of Naruto",
+      "japaneseTitle": "Road of Naruto"
+    }
+  ]
+}
+```
+
 ---
 
-## Trending Sidebar
+## GET /spotlight
 
-Get trending sidebar widget data.
-
-```
-GET /api/trending-sidebar
-```
-
-**Parameters:** None
-
-**Example:**
+Get spotlight (featured) anime.
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/trending-sidebar"
+curl "https://anikototvapi.vercel.app/api/spotlight"
 ```
+
+Returns array of spotlight anime with posters, descriptions, ratings, and quality info.
 
 ---
 
-## Seasons
+## GET /trending
 
-Get season information for an anime.
-
-```
-GET /api/seasons/:id
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | number | Yes | Anime ID (path parameter) |
-
-**Example:**
+Get currently trending anime.
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/seasons/12345"
+curl "https://anikototvapi.vercel.app/api/trending"
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "slug": "witch-hat-atelier-ikmut/ep-11",
+      "poster": "https://cdn.anipixcdn.co/thumbnail/0412057393e8a45b3ba8b16874b6034d.jpg",
+      "title": "Witch Hat Atelier",
+      "japaneseTitle": "Tongari Boushi no Atelier",
+      "sub": 11,
+      "dub": 11,
+      "total": 13,
+      "type": "TV"
+    }
+  ]
+}
 ```
 
 ---
 
-## Watch Order
+## GET /top-ten
 
-Get recommended watch order for an anime.
-
-```
-GET /api/watch-order/:id
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | number | Yes | Anime ID (path parameter) |
-
-**Example:**
+Get top 10 anime for today, this week, and this month.
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/watch-order/12345"
+curl "https://anikototvapi.vercel.app/api/top-ten"
 ```
+
+Returns `{ today: [...], week: [...], month: [...] }`.
 
 ---
 
-## A-Z List
+## GET /schedule
 
-Get anime listing alphabetically.
-
-```
-GET /api/az-list/:letter
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `letter` | string | Yes | Letter or "other" for non-alpha titles |
-
-**Example:**
+Get anime schedule.
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/az-list/a"
-curl "https://anikototvapi.vercel.app/api/az-list/other"
+curl "https://anikototvapi.vercel.app/api/schedule"
+```
+
+Returns array of scheduled anime with air times.
+
+---
+
+## GET /random
+
+Get a random anime.
+
+```bash
+curl "https://anikototvapi.vercel.app/api/random"
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "results": {
+    "title": "Massara",
+    "type": "ONA",
+    "genres": ["Slice of Life", "Music"]
+  }
+}
 ```
 
 ---
 
-## Genre
+## GET /new-release
+
+Get latest released episodes.
+
+```bash
+curl "https://anikototvapi.vercel.app/api/new-release"
+```
+
+Returns paginated list of recently released anime episodes.
+
+---
+
+## GET /most-popular
+
+Get most popular anime.
+
+```bash
+curl "https://anikototvapi.vercel.app/api/most-popular"
+```
+
+Returns paginated list with `totalPages` and `data` array.
+
+---
+
+## GET /genre/:name
 
 Get anime by genre.
 
-```
-GET /api/genre/:name
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `name` | string | Yes | Genre slug |
-
-**Available Genres:**
-
-`action`, `adventure`, `cars`, `comedy`, `dementia`, `demons`, `drama`, `ecchi`, `fantasy`, `game`, `harem`, `historical`, `horror`, `isekai`, `josei`, `kids`, `magic`, `mahou-shoujo`, `martial-arts`, `mecha`, `military`, `music`, `mystery`, `parody`, `police`, `psychological`, `romance`, `samurai`, `school`, `sci-fi`, `seinen`, `shoujo`, `shoujo-ai`, `shounen`, `shounen-ai`, `slice-of-life`, `space`, `sports`, `super-power`, `supernatural`, `thriller`, `unknown`, `vampire`
-
-**Example:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Genre name (e.g., `action`, `romance`) |
+| `page` | number | No | Page number (default: 1) |
 
 ```bash
 curl "https://anikototvapi.vercel.app/api/genre/action"
 ```
 
+Returns paginated anime list filtered by genre.
+
 ---
 
-## Type
+## GET /type/:name
 
-Get anime by type.
-
-```
-GET /api/type/:name
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `name` | string | Yes | Type slug |
-
-**Available Types:** `movie`, `music`, `ona`, `ova`, `special`, `tv`
-
-**Example:**
+Get anime by type (TV, OVA, Movie, ONA, etc).
 
 ```bash
 curl "https://anikototvapi.vercel.app/api/type/tv"
@@ -834,24 +424,33 @@ curl "https://anikototvapi.vercel.app/api/type/tv"
 
 ---
 
-## Status
+## GET /status/:name
 
-Get anime by airing status.
-
-```
-GET /api/status/:name
-```
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `name` | string | Yes | Status slug |
-
-**Available Statuses:** `currently-airing`, `finished-airing`, `not-yet-aired`
-
-**Example:**
+Get anime by status (airing, completed, upcoming).
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/status/currently-airing"
+curl "https://anikototvapi.vercel.app/api/status/completed"
 ```
+
+---
+
+## GET /filter
+
+Filter anime with multiple parameters.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `keyword` | string | No | Search keyword (pass empty string if not searching) |
+| `genre[]` | number | No | Genre IDs |
+| `type` | string | No | TV, OVA, Movie, etc. |
+| `status` | string | No | aired, ongoing, upcoming |
+| `sort` | string | No | Most watched, score, name, etc. |
+| `page` | number | No | Page number |
+
+> **Important:** The `keyword` parameter must be present (even empty) or the site returns a 500 error.
+
+```bash
+curl "https://anikototvapi.vercel.app/api/filter?keyword=&genre[]=1"
+```
+
+Returns filtered and paginated anime list.

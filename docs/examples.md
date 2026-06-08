@@ -1,291 +1,365 @@
 # Code Examples
 
-> Working examples in cURL, JavaScript, and Python.
+All examples are tested and working with the live API.
+
+---
 
 ## cURL
 
-### Get Homepage
+### Homepage
 
 ```bash
-curl https://anikototvapi.vercel.app/api
+curl "https://anikototvapi.vercel.app/api"
 ```
 
-### Search Anime
+### Search
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/search?keyword=naruto&page=1"
+curl "https://anikototvapi.vercel.app/api/search?keyword=naruto"
 ```
 
-### Get Anime Info
+### Anime Info
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/info?id=naruto-shippuden"
+curl "https://anikototvapi.vercel.app/api/info?id=road-of-naruto-ggjw8"
 ```
 
-### Get Episodes
+### Episodes
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/episodes/naruto-shippuden"
+curl "https://anikototvapi.vercel.app/api/episodes/road-of-naruto-ggjw8"
 ```
 
-### Get Servers
+### Servers
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/servers?ids=SlNVT25..."
+SERVER_IDS=$(curl -s "https://anikototvapi.vercel.app/api/episodes/road-of-naruto-ggjw8" | python3 -c "import sys,json; print(json.load(sys.stdin)['results']['episodes'][0]['server_ids'])")
+curl "https://anikototvapi.vercel.app/api/servers?ids=$SERVER_IDS"
 ```
 
-### Get Stream URL
+### Stream URL
 
 ```bash
-curl "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9..."
+LINK_ID=$(curl -s "https://anikototvapi.vercel.app/api/episodes/road-of-naruto-ggjw8" | python3 -c "import sys,json; print(json.load(sys.stdin)['results']['episodes'][0]['server_ids'])" | xargs -I{} curl -s "https://anikototvapi.vercel.app/api/servers?ids={}" | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['link_id'])")
+curl "https://anikototvapi.vercel.app/api/stream?id=$LINK_ID"
 ```
 
-### Get Schedule
+### Random Anime
+
+```bash
+curl "https://anikototvapi.vercel.app/api/random"
+```
+
+### Schedule
 
 ```bash
 curl "https://anikototvapi.vercel.app/api/schedule"
-curl "https://anikototvapi.vercel.app/api/schedule?date=2026-06-08"
+```
+
+### Suggestions
+
+```bash
+curl "https://anikototvapi.vercel.app/api/suggestions?keyword=one+piece"
+```
+
+### Top 10
+
+```bash
+curl "https://anikototvapi.vercel.app/api/top-ten"
 ```
 
 ### Filter by Genre
-
-```bash
-curl "https://anikototvapi.vercel.app/api/filter?keyword=&genre[]=1&genre[]=4"
-```
-
-### Get Genre Anime
 
 ```bash
 curl "https://anikototvapi.vercel.app/api/genre/action"
 ```
 
+### Filter with Parameters
+
+```bash
+curl "https://anikototvapi.vercel.app/api/filter?keyword=&genre[]=1&type=tv&status=aired"
+```
+
 ---
 
-## JavaScript (Fetch API)
+## JavaScript (Browser)
 
-### Get Homepage
+### Homepage
 
 ```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api");
-const data = await res.json();
-console.log(data.results);
+async function getHomepage() {
+  const res = await fetch('https://anikototvapi.vercel.app/api');
+  const data = await res.json();
+  
+  console.log('Spotlights:', data.results.spotlights.length);
+  console.log('Trending:', data.results.trending.length);
+  console.log('Top Airing:', data.results.topAiring.length);
+  console.log('Genres:', data.results.genres.length);
+  
+  return data.results;
+}
+
+getHomepage();
 ```
 
-### Search Anime
+### Search
 
 ```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/search?keyword=naruto");
-const data = await res.json();
-data.results.data.forEach(anime => {
-  console.log(anime.title);
+async function searchAnime(keyword) {
+  const res = await fetch(`https://anikototvapi.vercel.app/api/search?keyword=${encodeURIComponent(keyword)}`);
+  const data = await res.json();
+  
+  return data.results.data.map(anime => ({
+    title: anime.title,
+    slug: anime.slug,
+    sub: anime.sub,
+    dub: anime.dub,
+    type: anime.type
+  }));
+}
+
+searchAnime('naruto').then(results => {
+  results.forEach(a => console.log(`${a.title} (${a.type}) — Sub: ${a.sub}, Dub: ${a.dub}`));
 });
 ```
 
-### Get Anime Info
+### Anime Info
 
 ```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/info?id=naruto-shippuden");
-const data = await res.json();
-console.log(data.results.title);
-console.log(data.results.synopsis);
-```
+async function getAnimeInfo(slug) {
+  const res = await fetch(`https://anikototvapi.vercel.app/api/info?id=${slug}`);
+  const data = await res.json();
+  
+  const info = data.results;
+  console.log(`Title: ${info.title}`);
+  console.log(`Type: ${info.type}`);
+  console.log(`Status: ${info.status}`);
+  console.log(`Episodes: ${info.totalEpisodes || 'Unknown'}`);
+  console.log(`MAL ID: ${info.malId}`);
+  
+  return info;
+}
 
-### Get Episodes
-
-```javascript
-const res = await fetch("https://anikototvapi.vercel.app/api/episodes/naruto-shippuden");
-const data = await res.json();
-data.results.episodes.forEach(ep => {
-  console.log(`Episode ${ep.episode_no} - ID: ${ep.id}`);
-});
+getAnimeInfo('road-of-naruto-ggjw8');
 ```
 
 ### Full Streaming Flow
 
 ```javascript
-const BASE = "https://anikototvapi.vercel.app/api";
-
-async function getStream(slug, episodeNum) {
-  // 1. Get episodes
-  const epsRes = await fetch(`${BASE}/episodes/${slug}`);
-  const eps = await epsRes.json();
-  const ep = eps.results.episodes.find(e => e.episode_no === episodeNum);
+async function getStreamUrl(animeSlug) {
+  // Step 1: Get episodes
+  const episodesRes = await fetch(`https://anikototvapi.vercel.app/api/episodes/${animeSlug}`);
+  const episodesData = await episodesRes.json();
+  const episodes = episodesData.results.episodes;
   
-  // 2. Get servers
-  const srvRes = await fetch(`${BASE}/servers?ids=${ep.server_ids}`);
-  const srvs = await srvRes.json();
-  const server = srvs.results[0];
+  if (!episodes || episodes.length === 0) {
+    throw new Error('No episodes found');
+  }
   
-  // 3. Get stream
-  const streamRes = await fetch(`${BASE}/stream?id=${server.link_id}`);
-  const stream = await streamRes.json();
+  // Use first episode's server_ids
+  const serverIds = episodes[0].server_ids;
   
-  return stream.results;
+  // Step 2: Get servers
+  const serversRes = await fetch(`https://anikototvapi.vercel.app/api/servers?ids=${serverIds}`);
+  const serversData = await serversRes.json();
+  const servers = serversData.results;
+  
+  if (!servers || servers.length === 0) {
+    throw new Error('No servers found');
+  }
+  
+  // Pick first server
+  const linkId = servers[0].link_id;
+  
+  // Step 3: Get stream URL
+  const streamRes = await fetch(`https://anikototvapi.vercel.app/api/stream?id=${linkId}`);
+  const streamData = await streamRes.json();
+  
+  return streamData.results.url;
 }
 
 // Usage
-getStream("naruto-shippuden", 1).then(stream => {
-  console.log("URL:", stream.url);
-  videoPlayer.src = stream.url;
-});
+getStreamUrl('road-of-naruto-ggjw8')
+  .then(url => {
+    console.log('Stream URL:', url);
+    // Use with video player
+  })
+  .catch(err => console.error('Error:', err.message));
 ```
 
-### Search with Suggestions
+### Random Anime
 
 ```javascript
-// Get autocomplete suggestions
-const res = await fetch("https://anikototvapi.vercel.app/api/search/suggest?keyword=dea");
-const suggestions = await res.json();
-suggestions.results.forEach(s => console.log(s.title));
-```
+async function getRandomAnime() {
+  const res = await fetch('https://anikototvapi.vercel.app/api/random');
+  const data = await res.json();
+  
+  const anime = data.results;
+  console.log(`Random: ${anime.title} (${anime.type})`);
+  console.log('Genres:', anime.genres.join(', '));
+  
+  return anime;
+}
 
----
-
-## Python (requests)
-
-### Get Homepage
-
-```python
-import requests
-
-r = requests.get("https://anikototvapi.vercel.app/api")
-data = r.json()
-print(data["results"])
-```
-
-### Search Anime
-
-```python
-import requests
-
-r = requests.get("https://anikototvapi.vercel.app/api/search", params={"keyword": "naruto"})
-data = r.json()
-for anime in data["results"]["data"]:
-    print(anime["title"])
-```
-
-### Get Anime Info
-
-```python
-import requests
-
-r = requests.get("https://anikototvapi.vercel.app/api/info", params={"id": "naruto-shippuden"})
-data = r.json()
-print(data["results"]["title"])
-print(data["results"]["synopsis"])
-```
-
-### Get Episodes
-
-```python
-import requests
-
-r = requests.get("https://anikototvapi.vercel.app/api/episodes/naruto-shippuden")
-data = r.json()
-for ep in data["results"]["episodes"]:
-    print(f"Episode {ep['episode_no']} - ID: {ep['id']}")
-```
-
-### Full Streaming Flow
-
-```python
-import requests
-
-BASE = "https://anikototvapi.vercel.app/api"
-
-def get_stream(slug, episode_num):
-    # 1. Get episodes
-    eps = requests.get(f"{BASE}/episodes/{slug}").json()
-    ep = next(e for e in eps["results"]["episodes"] if e["episode_no"] == episode_num)
-    
-    # 2. Get servers
-    srvs = requests.get(f"{BASE}/servers", params={"ids": ep["server_ids"]}).json()
-    server = srvs["results"][0]
-    
-    # 3. Get stream
-    stream = requests.get(f"{BASE}/stream", params={"id": server["link_id"]}).json()
-    
-    return stream["results"]
-
-# Usage
-stream = get_stream("naruto-shippuden", 1)
-print(f"URL: {stream['url']}")
+getRandomAnime();
 ```
 
 ### Filter by Genre
 
-```python
-import requests
+```javascript
+async function getAnimeByGenre(genre, page = 1) {
+  const res = await fetch(`https://anikototvapi.vercel.app/api/genre/${genre}?page=${page}`);
+  const data = await res.json();
+  
+  return data.results.data.map(anime => ({
+    title: anime.title,
+    sub: anime.sub,
+    dub: anime.dub
+  }));
+}
 
-r = requests.get("https://anikototvapi.vercel.app/api/filter", params={
-    "keyword": "",
-    "genre[]": [1, 4]  # Action, Comedy
-})
-data = r.json()
-```
-
-### Get Schedule
-
-```python
-import requests
-
-r = requests.get("https://anikototvapi.vercel.app/api/schedule")
-data = r.json()
+getAnimeByGenre('action').then(anime => {
+  console.log('Action Anime:');
+  anime.forEach(a => console.log(`- ${a.title} (Sub: ${a.sub}, Dub: ${a.dub})`));
+});
 ```
 
 ---
 
-## Node.js (axios)
+## Node.js (with axios)
 
-### Search Anime
+### Homepage
 
 ```javascript
-const axios = require("axios");
+const axios = require('axios');
 
-const { data } = await axios.get("https://anikototvapi.vercel.app/api/search", {
-  params: { keyword: "naruto" }
+async function getHomepage() {
+  const { data } = await axios.get('https://anikototvapi.vercel.app/api');
+  
+  console.log('Spotlights:', data.results.spotlights.length);
+  console.log('Trending:', data.results.trending.length);
+  
+  return data.results;
+}
+
+getHomepage();
+```
+
+### Search
+
+```javascript
+const axios = require('axios');
+
+async function searchAnime(keyword) {
+  const { data } = await axios.get('https://anikototvapi.vercel.app/api/search', {
+    params: { keyword }
+  });
+  
+  return data.results.data;
+}
+
+searchAnime('naruto').then(results => {
+  results.forEach(a => console.log(`${a.title} (${a.type})`));
 });
-console.log(data.results.data);
 ```
 
 ### Full Streaming Flow
 
 ```javascript
-const axios = require("axios");
+const axios = require('axios');
 
-const BASE = "https://anikototvapi.vercel.app/api";
-
-async function getStream(slug, episodeNum) {
-  const { data: eps } = await axios.get(`${BASE}/episodes/${slug}`);
-  const ep = eps.results.episodes.find(e => e.episode_no === episodeNum);
+async function getStreamUrl(animeSlug) {
+  const BASE = 'https://anikototvapi.vercel.app/api';
   
-  const { data: srvs } = await axios.get(`${BASE}/servers`, { params: { ids: ep.server_ids } });
-  const server = srvs.results[0];
+  // Step 1: Get episodes
+  const { data: episodesData } = await axios.get(`${BASE}/episodes/${animeSlug}`);
+  const episodes = episodesData.results.episodes;
   
-  const { data: stream } = await axios.get(`${BASE}/stream`, { params: { id: server.link_id } });
+  if (!episodes || episodes.length === 0) {
+    throw new Error('No episodes found');
+  }
   
-  return stream.results;
+  const serverIds = episodes[0].server_ids;
+  
+  // Step 2: Get servers
+  const { data: serversData } = await axios.get(`${BASE}/servers`, {
+    params: { ids: serverIds }
+  });
+  const servers = serversData.results;
+  
+  if (!servers || servers.length === 0) {
+    throw new Error('No servers found');
+  }
+  
+  const linkId = servers[0].link_id;
+  
+  // Step 3: Get stream URL
+  const { data: streamData } = await axios.get(`${BASE}/stream`, {
+    params: { id: linkId }
+  });
+  
+  return streamData.results.url;
 }
+
+// Usage
+getStreamUrl('road-of-naruto-ggjw8')
+  .then(url => console.log('Stream URL:', url))
+  .catch(err => console.error('Error:', err.message));
 ```
 
----
+### Episode List
 
-## cURL (with jq)
+```javascript
+const axios = require('axios');
 
-### Pretty Print Homepage
+async function getEpisodeList(animeSlug) {
+  const { data } = await axios.get(`https://anikototvapi.vercel.app/api/episodes/${animeSlug}`);
+  
+  const { animeId, totalEpisodes, episodes } = data.results;
+  
+  console.log(`Anime ID: ${animeId}`);
+  console.log(`Total Episodes: ${totalEpisodes}`);
+  console.log(`Episodes available: ${episodes.length}`);
+  
+  episodes.forEach(ep => {
+    console.log(`  Episode ${ep.episode_no}: server_ids available = ${!!ep.server_ids}`);
+  });
+  
+  return data.results;
+}
 
-```bash
-curl -s https://anikototvapi.vercel.app/api | jq '.results.trending[:3]'
+getEpisodeList('road-of-naruto-ggjw8');
 ```
 
-### Search and Extract Titles
+### Suggestions
 
-```bash
-curl -s "https://anikototvapi.vercel.app/api/search?keyword=naruto" | jq '.results.data[].title'
+```javascript
+const axios = require('axios');
+
+async function getSuggestions(keyword) {
+  const { data } = await axios.get('https://anikototvapi.vercel.app/api/suggestions', {
+    params: { keyword }
+  });
+  
+  return data.results;
+}
+
+getSuggestions('one piece').then(suggestions => {
+  suggestions.forEach(a => console.log(`${a.title} (${a.slug})`));
+});
 ```
 
-### Get Stream URL Only
+### Schedule
 
-```bash
-curl -s "https://anikototvapi.vercel.app/api/stream?id=MTF1dkFtaW9..." | jq -r '.results.url'
+```javascript
+const axios = require('axios');
+
+async function getSchedule() {
+  const { data } = await axios.get('https://anikototvapi.vercel.app/api/schedule');
+  
+  console.log('Scheduled anime:', data.results.length);
+  return data.results;
+}
+
+getSchedule();
 ```

@@ -1,6 +1,86 @@
 # Architecture
 
-> Project structure, tech stack, and design decisions.
+## Project Structure
+
+```
+AniKotoAPI/
+├── server.js                          # Express entry point, port 4444
+├── package.json                       # name: "AniKotoAPI"
+├── vercel.json                        # Routes /api/* and /* to server.js
+├── .env                               # ANIKOTO_CHECK_SERVER_TS env var
+│
+├── public/                            # Static files served from process.cwd()
+│   ├── index.html                     # Premium landing page (56KB, SVG icons, live console)
+│   ├── 404.html                       # Glitch animation error page
+│   ├── manifest.json                  # PWA manifest (theme: #A855F7)
+│   ├── robots.txt                     # Crawler directives
+│   ├── sitemap.xml                    # 4 pages (home, api, privacy, tos)
+│   ├── og-image.svg                   # SVG Open Graph image
+│   ├── privacy.html                   # Privacy policy
+│   └── tos.html                       # Terms of service
+│
+├── docs/                              # API documentation
+│   ├── index.md                       # Overview, quick start, features
+│   ├── endpoints.md                   # Full API reference (27 endpoints)
+│   ├── streaming.md                   # Streaming flow guide (3-step)
+│   ├── examples.md                    # cURL, JavaScript, Python, Node.js
+│   └── architecture.md                # This file
+│
+├── src/
+│   ├── configs/
+│   │   ├── dataUrl.js                 # URL patterns, BASE_URL: https://anikototv.to
+│   │   ├── header.config.js           # Request headers (User-Agent, Referer, etc.)
+│   │   └── ids.config.js              # Genre/type/status ID mappings
+│   │
+│   ├── routes/
+│   │   ├── apiRoutes.js               # All route definitions
+│   │   └── category.route.js          # genre/:name, type/:name, status/:name
+│   │
+│   ├── controllers/
+│   │   ├── home.controller.js         # Homepage data
+│   │   ├── search.controller.js       # Anime search
+│   │   ├── info.controller.js         # Anime info
+│   │   ├── episodes.controller.js     # Episode list
+│   │   ├── servers.controller.js      # Server list
+│   │   ├── stream.controller.js       # Stream URL
+│   │   ├── suggestion.controller.js   # Anime suggestions
+│   │   ├── spotlight.controller.js    # Spotlight anime
+│   │   ├── trending.controller.js     # Trending anime
+│   │   ├── topTen.controller.js       # Top 10
+│   │   ├── schedule.controller.js     # Schedule
+│   │   ├── random.controller.js       # Random anime
+│   │   ├── newRelease.controller.js   # New releases
+│   │   ├── mostPopular.controller.js  # Most popular
+│   │   ├── genre.controller.js        # Genre filter
+│   │   ├── type.controller.js         # Type filter
+│   │   ├── status.controller.js       # Status filter
+│   │   └── filter.controller.js       # Advanced filter
+│   │
+│   ├── extractors/
+│   │   ├── home.extractor.js          # Homepage extraction
+│   │   ├── search.extractor.js        # Search results
+│   │   ├── info.extractor.js          # Anime details
+│   │   ├── episodeList.extractor.js   # Episode list + server_ids
+│   │   ├── serverList.extractor.js    # Server list
+│   │   ├── streamInfo.extractor.js    # Stream URL extraction
+│   │   ├── spotlight.extractor.js     # Spotlight anime
+│   │   ├── trending.extractor.js      # Trending anime
+│   │   ├── topTen.extractor.js        # Top 10
+│   │   ├── schedule.extractor.js      # Schedule
+│   │   ├── random.extractor.js        # Random anime
+│   │   ├── newRelease.extractor.js    # New releases
+│   │   ├── mostPopular.extractor.js   # Most popular
+│   │   ├── genre.extractor.js         # Genre filter
+│   │   ├── type.extractor.js          # Type filter
+│   │   ├── status.extractor.js        # Status filter
+│   │   ├── filter.extractor.js        # Advanced filter
+│   │   └── suggestion.extractor.js    # Suggestions
+│   │
+│   └── helper/
+│       └── cache.helper.js            # In-memory Map cache, 5-min TTL
+│
+└── CHANGELOG.md                       # Version history
+```
 
 ## Tech Stack
 
@@ -8,207 +88,63 @@
 |-----------|------------|
 | Runtime | Node.js |
 | Framework | Express.js |
-| Scraper | Cheerio + Axios |
+| Scraping | Cheerio + Axios |
 | Deployment | Vercel (Serverless) |
-| Language | JavaScript (ES Modules) |
-
-## Project Structure
-
-```
-AniKotoAPI/
-├── server.js                 # Express entry point
-├── vercel.json               # Vercel deployment config
-├── package.json              # Dependencies and scripts
-├── public/                   # Static files
-│   ├── index.html            # Landing page
-│   ├── 404.html              # Error page
-│   ├── manifest.json         # PWA manifest
-│   ├── robots.txt            # Crawler directives
-│   ├── sitemap.xml           # XML sitemap
-│   ├── og-image.svg          # Open Graph image
-│   ├── privacy.html          # Privacy policy
-│   └── tos.html              # Terms of service
-├── src/
-│   ├── configs/
-│   │   ├── dataUrl.js        # URL patterns for anikototv.to
-│   │   ├── header.config.js  # Request headers
-│   │   └── ids.config.js     # Genre/type/status ID mappings
-│   ├── controllers/
-│   │   ├── homeInfo.controller.js
-│   │   ├── animeInfo.controller.js
-│   │   ├── search.controller.js
-│   │   ├── episodeList.controller.js
-│   │   ├── episodeListAjax.controller.js
-│   │   ├── streamInfo.controller.js
-│   │   ├── schedule.controller.js
-│   │   ├── spotlight.controller.js
-│   │   ├── trending.controller.js
-│   │   ├── topten.controller.js
-│   │   ├── suggestion.controller.js
-│   │   ├── random.controller.js
-│   │   ├── popular.controller.js
-│   │   ├── filter.controller.js
-│   │   ├── watchPage.controller.js
-│   │   ├── azList.controller.js
-│   │   ├── newRelease.controller.js
-│   │   ├── status.controller.js
-│   │   ├── trendingSidebar.controller.js
-│   │   ├── seasons.controller.js
-│   │   └── watchOrder.controller.js
-│   ├── extractors/
-│   │   ├── homeInfo.extractor.js
-│   │   ├── animeInfo.extractor.js
-│   │   ├── search.extractor.js
-│   │   ├── episodeList.extractor.js
-│   │   ├── streamInfo.extractor.js
-│   │   ├── schedule.extractor.js
-│   │   ├── spotlight.extractor.js
-│   │   ├── trending.extractor.js
-│   │   ├── topten.extractor.js
-│   │   ├── suggestion.extractor.js
-│   │   ├── random.extractor.js
-│   │   ├── popular.extractor.js
-│   │   ├── filter.extractor.js
-│   │   ├── watchPage.extractor.js
-│   │   ├── azList.extractor.js
-│   │   ├── newRelease.extractor.js
-│   │   ├── status.extractor.js
-│   │   ├── trendingSidebar.extractor.js
-│   │   ├── seasons.extractor.js
-│   │   └── watchOrder.extractor.js
-│   ├── routes/
-│   │   ├── apiRoutes.js      # Main API router
-│   │   └── category.route.js # Genre/type/status routes
-│   └── helper/
-│       └── cache.helper.js   # In-memory cache
-└── docs/                     # Documentation
-    ├── index.md
-    ├── endpoints.md
-    ├── streaming.md
-    ├── examples.md
-    └── architecture.md
-```
+| Caching | In-memory Map with 5-min TTL |
+| Static Files | Express static middleware |
 
 ## Request Flow
 
 ```
 Client Request
-     │
-     ▼
-┌─────────────┐
-│  vercel.json │ ─── /api/* ──→ server.js
-│  (routing)   │ ─── /* ─────→ public/
-└─────────────┘
-     │
-     ▼
-┌─────────────┐
-│  server.js   │
-│  (Express)   │
-└─────────────┘
-     │
-     ▼
-┌─────────────┐
-│ apiRoutes.js │ ─── Route matching
-└─────────────┘
-     │
-     ▼
-┌─────────────┐
-│ Controllers  │ ─── Business logic, cache check
-└─────────────┘
-     │
-     ▼
-┌─────────────┐
-│ Extractors   │ ─── HTTP request + HTML parsing
-└─────────────┘
-     │
-     ▼
-┌─────────────┐
-│ anikototv.to │ ─── Source data
-└─────────────┘
+    ↓
+Vercel Routes (/api/* → server.js)
+    ↓
+Express Router (apiRoutes.js)
+    ↓
+Controller (e.g., search.controller.js)
+    ↓
+Extractor (e.g., search.extractor.js)
+    ↓
+HTTP Request to anikototv.to (with headers)
+    ↓
+Cheerio parses HTML response
+    ↓
+Returns structured JSON
+    ↓
+Client Response
 ```
 
-## Caching
+## Streaming Flow
 
-The API uses an in-memory cache with a 5-minute TTL:
-
-```javascript
-// Cache key format: {endpoint}_{id}
-// Examples:
-// "episodes_naruto-shippuden"
-// "stream_MTF1dkFtaW9..."
-// "servers_SlNVT25..."
+```
+/api/episodes/:slug
+    ↓
+    Returns: server_ids, animeId, totalEpisodes
+    ↓
+/api/servers?ids={server_ids}
+    ↓
+    Returns: link_id, type (sub/dub), name (HD-1, Vidstream-2, etc.)
+    ↓
+/api/stream?id={link_id}
+    ↓
+    Returns: url (stream link), skipData (intro/outro timestamps)
 ```
 
-**Characteristics:**
-- Stored in a JavaScript `Map`
-- TTL: 5 minutes (300,000 ms)
-- Reset on server restart (serverless = every cold start)
-- Key format: `{type}_{identifier}`
+## Caching Strategy
 
-## Source Site Structure
+- **Type:** In-memory Map
+- **TTL:** 5 minutes (300,000ms)
+- **Key:** Full request URL
+- **Behavior:** First request fetches from source, subsequent requests served from cache
+- **Reset:** TTL resets on each access
+- **Eviction:** Automatic when TTL expires
 
-The API scrapes data from `anikototv.to`:
+## Anti-Bot Protection
 
-| Page | URL Pattern | Data |
-|------|-------------|------|
-| Home | `/home` | Spotlight, trending, popular |
-| Watch | `/watch/{slug}` | Anime info, anime ID |
-| Episode | `/watch/{slug}/ep-{n}` | Episode data |
-| Search | `/filter?keyword={q}` | Search results |
-| Genre | `/genre/{name}` | Genre listings |
-| Type | `/type/{name}` | Type listings |
-| Status | `/status/{name}` | Status listings |
-| A-Z | `/az-list/{letter}` | Alphabetical list |
+The source site monitors AJAX responses for missing `data-ep-id` and `data-link-id` attributes. If these are missing in the `/ajax/server/list` response, it triggers a reCAPTCHA challenge.
 
-**AJAX Endpoints:**
-
-| Endpoint | URL Pattern | Data |
-|----------|-------------|------|
-| Episodes | `/ajax/episode/list/{animeId}` | Episode list HTML |
-| Servers | `/ajax/server/list?servers={ids}` | Server list HTML |
-| Stream | `/ajax/server?get={linkId}` | Stream URL JSON |
-
-## ID Mappings
-
-Genre IDs (partial):
-
-```javascript
-{
-  action: 1,
-  adventure: 2,
-  comedy: 4,
-  demons: 5,
-  drama: 8,
-  fantasy: 10,
-  isekai: 19,
-  romance: 22,
-  shounen: 27,
-  supernatural: 37
-}
-```
-
-Type IDs:
-
-```javascript
-{
-  movie: 1,
-  music: 2,
-  ona: 3,
-  ova: 4,
-  special: 5,
-  tv: 6
-}
-```
-
-Status IDs:
-
-```javascript
-{
-  "currently-airing": 1,
-  "finished-airing": 2,
-  "not-yet-aired": 3
-}
-```
+**Solution:** The API properly passes `data-ids` to the server list endpoint and parses the JSON response to extract the required attributes.
 
 ## Vercel Configuration
 
@@ -224,8 +160,7 @@ Status IDs:
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server.js",
-      "headers": { "Access-Control-Allow-Origin": "*" }
+      "dest": "server.js"
     },
     {
       "src": "/(.*)",
@@ -235,9 +170,28 @@ Status IDs:
 }
 ```
 
-## Error Handling
+- `/api/*` routes to Express for API handling
+- `/*` routes to Express for static file serving
+- Static files served from `process.cwd()` (Vercel serverless compatible)
 
-All errors follow this format:
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `ANIKOTO_CHECK_SERVER_TS` | Anti-bot check timestamp from source site |
+
+## Response Format
+
+All API responses follow this structure:
+
+```json
+{
+  "success": true,
+  "results": { ... }
+}
+```
+
+Error responses:
 
 ```json
 {
@@ -246,11 +200,13 @@ All errors follow this format:
 }
 ```
 
-Common errors:
+## Dependencies
 
-| Status | Message | Cause |
-|--------|---------|-------|
-| 400 | "Link ID is required" | Missing `id` parameter |
-| 400 | "Episode IDs are required" | Missing `ids` parameter |
-| 400 | "Anime slug is required" | Missing anime slug |
-| 500 | "Internal server error" | Scraping failed or site down |
+| Package | Version | Purpose |
+|---------|---------|---------|
+| express | ^4.18.2 | Web framework |
+| cheerio | ^1.0.0-rc.12 | HTML parsing |
+| axios | ^1.6.0 | HTTP requests |
+| cors | ^2.8.5 | CORS headers |
+| cookie-parser | ^1.4.6 | Cookie parsing |
+| dotenv | ^16.3.1 | Environment variables |
