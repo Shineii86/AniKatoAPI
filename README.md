@@ -41,6 +41,14 @@
 
 ---
 
+> ## ⚠️ Disclaimer
+>
+> 1. This `API` does not store any files — it only links to media hosted on 3rd party services.
+> 2. This `API` is explicitly made for **educational purposes only** and not for commercial usage. This repo will not be responsible for any misuse of it.
+> 3. All anime data, images, and content belong to their respective owners. This project is not affiliated with anikototv.to.
+
+---
+
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
@@ -418,6 +426,12 @@ Home page data — spotlight carousel, trending anime, top airing, and genre lis
 curl "https://anikato.vercel.app/api/"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/");
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -486,6 +500,14 @@ Search anime by keyword with pagination.
 curl "https://anikato.vercel.app/api/search?keyword=one+piece"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/search", {
+  params: { keyword: "one piece", page: 1 }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -541,6 +563,14 @@ Search suggestions for autocomplete (returns max 10 results).
 curl "https://anikato.vercel.app/api/search/suggest?keyword=one+piece"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/search/suggest", {
+  params: { keyword: "one piece" }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -572,6 +602,14 @@ Detailed anime information including synopsis, genres, studios, and more.
 
 ```bash
 curl "https://anikato.vercel.app/api/info?id=one-piece-odmau"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/info", {
+  params: { id: "one-piece-odmau" }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -619,6 +657,14 @@ Complete watch page data — anime info, episode list, servers, trending, and re
 
 ```bash
 curl "https://anikato.vercel.app/api/watch?slug=one-piece-odmau&ep=1165"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/watch", {
+  params: { slug: "one-piece-odmau", ep: 1165 }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -678,6 +724,12 @@ Episode list for an anime (loaded via AJAX for accuracy).
 curl "https://anikato.vercel.app/api/episodes/one-piece-odmau"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/episodes/one-piece-odmau");
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -708,6 +760,12 @@ Raw AJAX episode list response from the source site. Returns HTML that contains 
 curl "https://anikato.vercel.app/api/episodes-ajax/1642"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/episodes-ajax/1642");
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -733,6 +791,14 @@ Streaming server info — extracts video embed URL and skip data via AJAX. Requi
 
 ```bash
 curl "https://anikato.vercel.app/api/stream?id={linkId}"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/stream", {
+  params: { id: "yourLinkId" }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -767,6 +833,14 @@ Server list for an episode — returns available streaming servers with their na
 
 ```bash
 curl "https://anikato.vercel.app/api/servers?ids={episodeIds}"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/servers", {
+  params: { ids: "yourEpisodeIds" }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -804,6 +878,14 @@ Mapper API — fetches additional streaming servers from gogoanime/anivibe via t
 curl "https://anikato.vercel.app/api/mapper-servers?malId=21&slug=one-piece&timestamp=1717900000"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/mapper-servers", {
+  params: { malId: 21, slug: "one-piece", timestamp: 1717900000 }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -836,6 +918,12 @@ Top 10 anime rankings for day, week, and month.
 
 ```bash
 curl "https://anikato.vercel.app/api/top-ten"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/top-ten");
+console.log(resp.data);
 ```
 
 <details>
@@ -873,6 +961,12 @@ Spotlight carousel data — featured anime with posters, descriptions, and ratin
 
 ```bash
 curl "https://anikato.vercel.app/api/spotlight"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/spotlight");
+console.log(resp.data);
 ```
 
 <details>
@@ -917,6 +1011,12 @@ Trending anime — recently updated episodes with sub/dub counts.
 curl "https://anikato.vercel.app/api/trending"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/trending");
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -958,6 +1058,12 @@ Random anime — follows redirect to a random anime page and returns full info.
 curl "https://anikato.vercel.app/api/random"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/random");
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -992,6 +1098,14 @@ Most popular anime with pagination — sorted by view count.
 
 ```bash
 curl "https://anikato.vercel.app/api/most-popular?page=1"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/most-popular", {
+  params: { page: 1 }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -1045,6 +1159,14 @@ Newly released anime with pagination.
 curl "https://anikato.vercel.app/api/new-release?page=1"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/new-release", {
+  params: { page: 1 }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -1086,6 +1208,12 @@ Sidebar data — trending (day/week/month) + latest episodes for widget display.
 curl "https://anikato.vercel.app/api/trending-sidebar"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/trending-sidebar");
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -1124,6 +1252,14 @@ Recently added anime with pagination.
 
 ```bash
 curl "https://anikato.vercel.app/api/newly-added?page=1"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/newly-added", {
+  params: { page: 1 }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -1168,6 +1304,14 @@ Anime schedule for a specific date. Returns an array of anime airing on that dat
 
 ```bash
 curl "https://anikato.vercel.app/api/schedule?date=2026-06-08"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/schedule", {
+  params: { date: "2026-06-08" }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -1224,6 +1368,14 @@ Advanced filtering with multiple criteria. Requires `keyword` parameter (use emp
 curl "https://anikato.vercel.app/api/filter?genre=action&type=tv&page=1"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/filter", {
+  params: { genre: "action", type: "tv", page: 1 }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -1260,6 +1412,14 @@ Browse anime by genre.
 
 ```bash
 curl "https://anikato.vercel.app/api/genre/action?page=1"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/genre/action", {
+  params: { page: 1 }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -1305,6 +1465,14 @@ Browse anime by type.
 
 ```bash
 curl "https://anikato.vercel.app/api/type/movie?page=1"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/type/movie", {
+  params: { page: 1 }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -1353,6 +1521,14 @@ Browse anime by airing status.
 curl "https://anikato.vercel.app/api/status/currently-airing?page=1"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/status/currently-airing", {
+  params: { page: 1 }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -1398,6 +1574,14 @@ Browse anime alphabetically.
 curl "https://anikato.vercel.app/api/az-list/a?page=1"
 ```
 
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/az-list/a", {
+  params: { page: 1 }
+});
+console.log(resp.data);
+```
+
 <details>
 <summary>📄 Example Response</summary>
 
@@ -1441,6 +1625,14 @@ Search suggestions for autocomplete (returns max 10 results).
 
 ```bash
 curl "https://anikato.vercel.app/api/suggestions?keyword=naruto"
+```
+
+```javascript
+import axios from "axios";
+const resp = await axios.get("https://anikato.vercel.app/api/suggestions", {
+  params: { keyword: "naruto" }
+});
+console.log(resp.data);
 ```
 
 <details>
@@ -1549,6 +1741,12 @@ curl "https://anikato.vercel.app/api/suggestions?keyword=naruto"
 # Or use Vercel CLI
 npx vercel --prod
 ```
+
+### 🖥️ Render
+
+Host your own instance of AniKatoAPI on Render.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Shineii86/AniKatoAPI)
 
 ### 🖥️ Standalone Server
 
