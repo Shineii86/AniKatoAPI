@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2026-06-08
+
+### Changed
+- Completely redesigned `public/index.html` landing page (AniNewsAPI style)
+- Dark theme with ambient floating orb animations, glassmorphism cards, sticky header
+- Hero section with terminal-style API preview and animated gradient text
+- Stats ribbon (24+ endpoints, 0 API keys, 40+ genres, live data)
+- Features grid with 6 cards (search, streaming, metadata, schedule, filters, caching)
+- Interactive API endpoint documentation with expandable cards, parameter tables, code examples
+- "Try It Live" playground with 4 interactive demos (search, stream, random, schedule)
+- Responsive mobile design
+- Redesigned `public/404.html` with animated 404 code, floating animation, action buttons
+
 ## [1.5.4] - 2026-06-08
 
 ### Changed

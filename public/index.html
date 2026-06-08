@@ -1,246 +1,544 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AniKatoAPI - Anime API</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            padding: 40px 0;
-        }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #e94560, #0f3460);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .subtitle {
-            color: #a0a0a0;
-            font-size: 1.2rem;
-        }
-        .api-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .api-section h2 {
-            color: #e94560;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-        .endpoint {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-        }
-        .method {
-            background: #e94560;
-            color: #fff;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .path {
-            color: #0f3460;
-            font-weight: bold;
-        }
-        .description {
-            color: #a0a0a0;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-        .footer {
-            text-align: center;
-            padding: 40px 0;
-            color: #a0a0a0;
-        }
-        .badge {
-            display: inline-block;
-            background: #e94560;
-            color: #fff;
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin: 5px;
-            font-size: 0.9rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AniKatoAPI - Anime Data API</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛩</text></svg>" />
+  <style>
+    :root {
+      --bg-primary: #0a0a12;
+      --bg-secondary: #111120;
+      --bg-card: rgba(18, 18, 32, 0.7);
+      --text-primary: #eee;
+      --text-secondary: #9a9ab0;
+      --accent-pink: #f43f8e;
+      --accent-purple: #a855f7;
+      --accent-red: #ec4899;
+      --accent-indigo: #6366f1;
+      --accent-green: #22c55e;
+      --border: rgba(255,255,255,0.08);
+      --glass: rgba(255,255,255,0.03);
+      --glow-pink: rgba(244,63,142,0.15);
+      --glow-purple: rgba(168,85,247,0.15);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Ambient Background ── */
+    .ambient {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .ambient .orb {
+      position: absolute; border-radius: 50%; filter: blur(100px); opacity: .18;
+    }
+    .orb-1 { width: 600px; height: 600px; background: var(--accent-pink); top: -200px; left: -100px; animation: drift 24s ease-in-out infinite; }
+    .orb-2 { width: 500px; height: 500px; background: var(--accent-purple); bottom: -150px; right: -100px; animation: drift 20s ease-in-out infinite reverse; }
+    .orb-3 { width: 350px; height: 350px; background: var(--accent-indigo); top: 40%; left: 50%; animation: drift 18s ease-in-out infinite 4s; }
+
+    @keyframes drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%     { transform: translate(40px,-30px) scale(1.08); }
+      66%     { transform: translate(-20px,20px) scale(.95); }
+    }
+
+    /* ── Layout ── */
+    .wrapper { position: relative; z-index: 1; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Sticky Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,18,.82);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    header .container { display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-icon { font-size: 1.6rem; }
+    .logo-text {
+      font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    nav { display: flex; gap: 6px; }
+    nav a {
+      color: var(--text-secondary); text-decoration: none; font-size: .82rem; font-weight: 500;
+      padding: 6px 14px; border-radius: 8px; transition: all .2s;
+    }
+    nav a:hover { color: var(--text-primary); background: var(--glass); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 60px; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 28px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--glass); border: 1px solid var(--border);
+      padding: 6px 16px; border-radius: 100px; font-size: .78rem; color: var(--text-secondary);
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-indigo) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--text-secondary); font-size: 1.05rem; max-width: 520px; line-height: 1.6; }
+
+    .terminal-preview {
+      width: 100%; max-width: 640px; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 80px var(--glow-pink);
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+      background: rgba(255,255,255,.03); border-bottom: 1px solid var(--border);
+    }
+    .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-dot:nth-child(1) { background: #ff5f57; }
+    .terminal-dot:nth-child(2) { background: #febc2e; }
+    .terminal-dot:nth-child(3) { background: #28c840; }
+    .terminal-title { margin-left: 10px; font-size: .75rem; color: var(--text-secondary); }
+    .terminal-body {
+      padding: 20px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: .82rem;
+      line-height: 1.8; color: var(--text-secondary); text-align: left; overflow-x: auto;
+    }
+    .terminal-body .cmd { color: var(--accent-green); }
+    .terminal-body .url { color: var(--accent-pink); }
+    .terminal-body .comment { color: #555; }
+
+    /* ── Stats ── */
+    .stats {
+      display: flex; justify-content: center; gap: 40px; padding: 20px 0 40px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-value {
+      font-size: 1.6rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: .78rem; color: var(--text-secondary); margin-top: 4px; }
+
+    /* ── Section Headings ── */
+    .section { padding: 50px 0; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px; font-size: .75rem;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--accent-purple);
+      font-weight: 600; margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 1.8rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px;
+    }
+    .section-desc { color: var(--text-secondary); font-size: .95rem; max-width: 560px; line-height: 1.6; margin-bottom: 32px; }
+
+    /* ── Features Grid ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;
+    }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 28px; transition: all .3s;
+    }
+    .feature-card:hover { border-color: rgba(244,63,142,.25); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
+    .feature-icon { font-size: 1.6rem; margin-bottom: 14px; }
+    .feature-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .feature-desc { color: var(--text-secondary); font-size: .84rem; line-height: 1.6; }
+
+    /* ── Endpoint Cards ── */
+    .endpoints-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px;
+    }
+    .endpoint-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; transition: all .3s;
+    }
+    .endpoint-card:hover { border-color: rgba(168,85,247,.3); }
+    .endpoint-header {
+      display: flex; align-items: center; gap: 10px; padding: 16px 20px;
+      cursor: pointer; user-select: none;
+    }
+    .method-badge {
+      font-size: .65rem; font-weight: 700; text-transform: uppercase; padding: 3px 8px;
+      border-radius: 6px; letter-spacing: .04em; flex-shrink: 0;
+    }
+    .method-get { background: rgba(34,197,94,.15); color: var(--accent-green); }
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--text-primary);
+      font-weight: 500; flex: 1;
+    }
+    .endpoint-chevron {
+      color: var(--text-secondary); transition: transform .3s; font-size: .75rem;
+    }
+    .endpoint-card.open .endpoint-chevron { transform: rotate(180deg); }
+    .endpoint-body {
+      max-height: 0; overflow: hidden; transition: max-height .35s ease;
+    }
+    .endpoint-card.open .endpoint-body { max-height: 600px; }
+    .endpoint-content {
+      padding: 0 20px 18px; border-top: 1px solid var(--border);
+    }
+    .endpoint-desc {
+      color: var(--text-secondary); font-size: .82rem; line-height: 1.6; padding-top: 14px; margin-bottom: 12px;
+    }
+    .endpoint-params { margin-bottom: 14px; }
+    .param-row {
+      display: flex; gap: 12px; padding: 6px 0; font-size: .78rem;
+      border-bottom: 1px solid rgba(255,255,255,.03);
+    }
+    .param-name {
+      font-family: 'JetBrains Mono', monospace; color: var(--accent-pink); min-width: 100px; font-weight: 500;
+    }
+    .param-type { color: var(--accent-purple); min-width: 60px; }
+    .param-desc { color: var(--text-secondary); flex: 1; }
+    .endpoint-code {
+      background: rgba(0,0,0,.3); border-radius: 8px; padding: 14px;
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem; line-height: 1.7;
+      color: var(--text-secondary); overflow-x: auto; white-space: pre;
+    }
+    .endpoint-code .kw { color: var(--accent-purple); }
+    .endpoint-code .str { color: var(--accent-green); }
+    .endpoint-code .cmt { color: #555; }
+
+    /* ── Playgrounds ── */
+    .playground {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 28px; margin-top: 32px;
+    }
+    .playground h3 {
+      font-size: 1rem; font-weight: 600; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .playground-row {
+      display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .playground input, .playground select {
+      background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; color: var(--text-primary); font-size: .85rem;
+      font-family: 'JetBrains Mono', monospace; flex: 1; min-width: 180px;
+      outline: none; transition: border-color .2s;
+    }
+    .playground input:focus, .playground select:focus { border-color: var(--accent-pink); }
+    .playground input::placeholder { color: #555; }
+    .playground select option { background: var(--bg-secondary); }
+    .btn {
+      padding: 10px 22px; border-radius: 8px; border: none; font-size: .85rem;
+      font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--glass); border: 1px solid var(--border); color: var(--text-secondary);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.06); color: var(--text-primary); }
+    .playground-result {
+      background: rgba(0,0,0,.3); border-radius: 8px; padding: 16px;
+      font-family: 'JetBrains Mono', monospace; font-size: .78rem; line-height: 1.7;
+      color: var(--accent-green); max-height: 340px; overflow: auto; white-space: pre-wrap;
+      display: none;
+    }
+    .playground-result.visible { display: block; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 40px 0; border-top: 1px solid var(--border); margin-top: 40px;
+      text-align: center;
+    }
+    .footer-brand {
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 6px;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .footer-desc { color: var(--text-secondary); font-size: .82rem; margin-bottom: 20px; }
+    .footer-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: .8rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--accent-pink); }
+    .footer-copy { color: #444; font-size: .72rem; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
+
+    @media (max-width: 640px) {
+      .hero { padding: 50px 0 30px; }
+      .hero h1 { font-size: 2rem; }
+      .stats { gap: 24px; }
+      .endpoints-grid { grid-template-columns: 1fr; }
+      .playground-row { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>AniKatoAPI</h1>
-            <p class="subtitle">RESTful API for Anime Data from anikototv.to</p>
-            <div style="margin-top: 20px;">
-                <span class="badge">Node.js</span>
-                <span class="badge">Express</span>
-                <span class="badge">Cheerio</span>
-                <span class="badge">Vercel</span>
-            </div>
-        </header>
 
-        <div class="api-section">
-            <h2>Base URL</h2>
-            <div class="endpoint">
-                <span class="path">https://anikatoapi.vercel.app/api</span>
-            </div>
+  <!-- Ambient Background -->
+  <div class="ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="wrapper">
+
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <a href="/" class="logo">
+          <span class="logo-icon">⛩</span>
+          <span class="logo-text">AniKatoAPI</span>
+        </a>
+        <nav>
+          <a href="#features">Features</a>
+          <a href="#endpoints">Endpoints</a>
+          <a href="#playground">Playground</a>
+          <a href="https://github.com/Shineii86/AniKatoAPI" target="_blank">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="hero-badge"><span class="dot"></span> Free &middot; No API key required</div>
+      <h1>The Anime API for<br /><span>Your Next Project</span></h1>
+      <p>Scrape-free, real-time data from AniKato. Browse, search, stream &mdash; all via a simple REST endpoint.</p>
+
+      <div class="terminal-preview">
+        <div class="terminal-bar">
+          <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+          <span class="terminal-title">anikato.vercel.app &mdash; bash</span>
         </div>
+        <div class="terminal-body"><span class="comment"># Fetch trending anime</span>
+<span class="cmd">curl</span> <span class="url">https://anikato.vercel.app/api</span> | jq <span class="str">'.trending[0]'</span>
 
-        <div class="api-section">
-            <h2>API Endpoints</h2>
-            
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/</span>
-                <p class="description">Get home page data including spotlight, trending, top anime, etc.</p>
-            </div>
+<span class="comment"># Search for anime</span>
+<span class="cmd">curl</span> <span class="url">"https://anikato.vercel.app/api/search?keyword=naruto"</span>
 
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/info?id={anime-slug}</span>
-                <p class="description">Get detailed information about a specific anime</p>
-            </div>
+<span class="comment"># Get episode servers</span>
+<span class="cmd">curl</span> <span class="url">"https://anikato.vercel.app/api/stream?id=demon-slayer-ep-1"</span></div>
+      </div>
+    </section>
 
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/search?keyword={keyword}&page={page}</span>
-                <p class="description">Search for anime by keyword</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/search/suggest?keyword={keyword}</span>
-                <p class="description">Get search suggestions</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/episodes/{anime-slug}</span>
-                <p class="description">Get episode list for an anime</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/stream?id={episode-id}</span>
-                <p class="description">Get streaming servers for an episode</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/schedule?date={YYYY-MM-DD}</span>
-                <p class="description">Get anime schedule for a specific date</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/spotlight</span>
-                <p class="description">Get spotlight/featured anime</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/trending</span>
-                <p class="description">Get trending anime</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/top-ten</span>
-                <p class="description">Get top 10 anime (today, week, month)</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/suggestions?keyword={keyword}</span>
-                <p class="description">Get anime suggestions</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/random</span>
-                <p class="description">Get random anime information</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/most-popular?page={page}</span>
-                <p class="description">Get most popular anime</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/filter?{params}</span>
-                <p class="description">Filter anime by genre, type, status, etc.</p>
-            </div>
-
-            <div class="endpoint">
-                <span class="method">GET</span>
-                <span class="path">/api/{category}?page={page}</span>
-                <p class="description">Get anime by category (genre/action, type/tv, etc.)</p>
-            </div>
-        </div>
-
-        <div class="api-section">
-            <h2>URL Structure</h2>
-            <div class="endpoint">
-                <span class="path">Anime: /watch/{anime-slug}</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Episode: /watch/{anime-slug}/ep-{number}</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Search: /filter?keyword={query}</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Genre: /genre/{genre-slug}</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Type: /type/{type-slug}</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Status: /status/{status-slug}</span>
-            </div>
-        </div>
-
-        <div class="api-section">
-            <h2>Categories</h2>
-            <div class="endpoint">
-                <span class="path">Genres: action, adventure, cars, comedy, dementia, demons, drama, ecchi, fantasy, game, harem, historical, horror, isekai, josei, kids, magic, mahou-shoujo, martial-arts, mecha, military, music, mystery, parody, police, psychological, romance, samurai, school, sci-fi, seinen, shoujo, shoujo-ai, shounen, shounen-ai, slice-of-life, space, sports, super-power, supernatural, thriller, unknown, vampire</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Types: movie, music, ona, ova, special, tv</span>
-            </div>
-            <div class="endpoint">
-                <span class="path">Status: currently-airing, finished-airing, not-yet-aired</span>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Made by Sʜɪɴᴇɪ Nᴏᴜᴢᴇɴ</p>
-            <p style="margin-top: 10px; font-size: 0.8rem;">This API is for educational purposes only</p>
-        </div>
+    <!-- Stats -->
+    <div class="stats container">
+      <div class="stat"><div class="stat-value">24+</div><div class="stat-label">Endpoints</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">API Keys</div></div>
+      <div class="stat"><div class="stat-value">40+</div><div class="stat-label">Genres</div></div>
+      <div class="stat"><div class="stat-value">Live</div><div class="stat-label">Data</div></div>
     </div>
+
+    <!-- Features -->
+    <section class="section container" id="features">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Built for developers</h2>
+      <p class="section-desc">Everything you need to build an anime website, mobile app, or Discord bot.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Full-text Search</div>
+          <div class="feature-desc">Search anime by keyword, genre, type, status. Get suggestions and autocomplete results.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📺</div>
+          <div class="feature-title">Episode Streaming</div>
+          <div class="feature-desc">Retrieve streaming servers, source links, and m3u8 URLs for any episode.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Rich Metadata</div>
+          <div class="feature-desc">Synopsis, MAL score, genres, characters, relations, recommendations, and more.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗓</div>
+          <div class="feature-title">Schedule &amp; Calendar</div>
+          <div class="feature-desc">View what's airing today or fetch the full weekly schedule.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Advanced Filters</div>
+          <div class="feature-desc">Filter by genre, type, status, season, sort order, and more.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Fast &amp; Cached</div>
+          <div class="feature-desc">In-memory cache with 5-minute TTL for snappy responses and reduced scraping.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Endpoints -->
+    <section class="section container" id="endpoints">
+      <div class="section-label">API Reference</div>
+      <h2 class="section-title">Endpoints</h2>
+      <p class="section-desc">All endpoints return JSON. Base URL: <code style="color:var(--accent-pink)">https://anikato.vercel.app/api</code></p>
+      <div class="endpoints-grid" id="endpointsGrid"></div>
+    </section>
+
+    <!-- Playground -->
+    <section class="section container" id="playground">
+      <div class="section-label">Try It</div>
+      <h2 class="section-title">Playground</h2>
+      <p class="section-desc">Test endpoints directly in your browser.</p>
+
+      <div class="playground">
+        <h3>🔍 Search Anime</h3>
+        <div class="playground-row">
+          <input id="searchInput" type="text" placeholder="e.g. naruto, one piece, demon slayer" />
+          <button class="btn btn-primary" onclick="runSearch()">Search</button>
+        </div>
+        <div class="playground-result" id="searchResult"></div>
+      </div>
+
+      <div class="playground">
+        <h3>📺 Get Stream Servers</h3>
+        <div class="playground-row">
+          <input id="streamInput" type="text" placeholder="Episode ID (e.g. naruto-ep-1)" />
+          <button class="btn btn-primary" onclick="runStream()">Get Servers</button>
+        </div>
+        <div class="playground-result" id="streamResult"></div>
+      </div>
+
+      <div class="playground">
+        <h3>🎲 Random Anime</h3>
+        <div class="playground-row">
+          <button class="btn btn-primary" onclick="runRandom()">Get Random Anime</button>
+        </div>
+        <div class="playground-result" id="randomResult"></div>
+      </div>
+
+      <div class="playground">
+        <h3>🗓 Schedule</h3>
+        <div class="playground-row">
+          <input id="scheduleInput" type="date" />
+          <button class="btn btn-primary" onclick="runSchedule()">Get Schedule</button>
+        </div>
+        <div class="playground-result" id="scheduleResult"></div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-brand">AniKatoAPI</div>
+        <div class="footer-desc">Free anime data API &middot; No API key required &middot; Educational use only</div>
+        <div class="footer-links">
+          <a href="https://github.com/Shineii86/AniKatoAPI" target="_blank">GitHub</a>
+          <a href="https://anikoto.vercel.app/api" target="_blank">API Status</a>
+          <a href="https://github.com/Shineii86/AniKatoAPI#readme" target="_blank">Documentation</a>
+        </div>
+        <div class="footer-copy">&copy; 2026 AniKatoAPI &middot; Made by Sʜɪɴᴇɪ Nᴏᴜᴢᴇɴ</div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    /* ── Endpoint Data ── */
+    const endpoints = [
+      { path: '/api', desc: 'Home page data: spotlight, trending, popular, top-airing, genres.', params: [], code: 'fetch("https://anikato.vercel.app/api")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/info?id={slug}', desc: 'Detailed anime info: synopsis, genres, relations, recommendations.', params: [{ name: 'id', type: 'string', desc: 'Anime slug (e.g. naruto)' }], code: 'fetch("https://anikato.vercel.app/api/info?id=naruto")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/search?keyword={q}', desc: 'Search anime by keyword.', params: [{ name: 'keyword', type: 'string', desc: 'Search query' }, { name: 'page', type: 'number', desc: 'Page number (default 1)' }], code: 'fetch("https://anikato.vercel.app/api/search?keyword=naruto")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/search/suggest?keyword={q}', desc: 'Search autocomplete suggestions.', params: [{ name: 'keyword', type: 'string', desc: 'Partial query' }], code: 'fetch("https://anikato.vercel.app/api/search/suggest?keyword=dea")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/episodes/{slug}', desc: 'Episode list (loaded via AJAX).', params: [{ name: 'slug', type: 'string', desc: 'Anime slug' }], code: 'fetch("https://anikato.vercel.app/api/episodes/naruto")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/stream?id={episodeId}', desc: 'Streaming servers for an episode.', params: [{ name: 'id', type: 'string', desc: 'Episode ID' }], code: 'fetch("https://anikato.vercel.app/api/stream?id=naruto-ep-1")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/servers?ids={ids}', desc: 'Resolve streaming server links.', params: [{ name: 'ids', type: 'string', desc: 'Comma-separated link IDs' }], code: 'fetch("https://anikato.vercel.app/api/servers?ids=123,456")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/schedule?date={YYYY-MM-DD}', desc: 'Anime schedule for a date.', params: [{ name: 'date', type: 'string', desc: 'Date (default today)' }], code: 'fetch("https://anikato.vercel.app/api/schedule")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/top-ten', desc: 'Top 10 anime (today, week, month).', params: [], code: 'fetch("https://anikato.vercel.app/api/top-ten")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/random', desc: 'Random anime info.', params: [], code: 'fetch("https://anikato.vercel.app/api/random")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/most-popular?page={n}', desc: 'Most popular anime list.', params: [{ name: 'page', type: 'number', desc: 'Page (default 1)' }], code: 'fetch("https://anikato.vercel.app/api/most-popular")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/filter?keyword={q}&genre[]={g}', desc: 'Filter by genre, type, status, season.', params: [{ name: 'keyword', type: 'string', desc: 'Search keyword (required)' }, { name: 'genre[]', type: 'number', desc: 'Genre IDs' }, { name: 'type[]', type: 'number', desc: 'Type IDs' }, { name: 'status[]', type: 'number', desc: 'Status IDs' }], code: 'fetch("https://anikato.vercel.app/api/filter?keyword=&genre[]=1&genre[]=4")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/new-release?page={n}', desc: 'Recently released episodes.', params: [{ name: 'page', type: 'number', desc: 'Page (default 1)' }], code: 'fetch("https://anikato.vercel.app/api/new-release")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/spotlight', desc: 'Spotlight/featured anime.', params: [], code: 'fetch("https://anikato.vercel.app/api/spotlight")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/trending', desc: 'Currently trending anime.', params: [], code: 'fetch("https://anikato.vercel.app/api/trending")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/popular', desc: 'Popular anime list.', params: [], code: 'fetch("https://anikato.vercel.app/api/popular")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/genre/{name}', desc: 'Anime by genre.', params: [{ name: 'name', type: 'string', desc: 'Genre slug (action, comedy, etc.)' }], code: 'fetch("https://anikato.vercel.app/api/genre/action")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/type/{name}', desc: 'Anime by type.', params: [{ name: 'name', type: 'string', desc: 'Type (tv, movie, ova, etc.)' }], code: 'fetch("https://anikato.vercel.app/api/type/tv")\n  .then(r => r.json())\n  .then(console.log);' },
+      { path: '/api/status/{name}', desc: 'Anime by status.', params: [{ name: 'name', type: 'string', desc: 'Status (currently-airing, finished-airing, not-yet-aired)' }], code: 'fetch("https://anikato.vercel.app/api/status/currently-airing")\n  .then(r => r.json())\n  .then(console.log);' },
+    ];
+
+    /* ── Render Endpoints ── */
+    const grid = document.getElementById('endpointsGrid');
+    endpoints.forEach((ep, i) => {
+      const card = document.createElement('div');
+      card.className = 'endpoint-card';
+      const paramsHtml = ep.params.map(p =>
+        `<div class="param-row"><span class="param-name">${p.name}</span><span class="param-type">${p.type}</span><span class="param-desc">${p.desc}</span></div>`
+      ).join('');
+      card.innerHTML = `
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">${ep.path}</span>
+          <span class="endpoint-chevron">▼</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="endpoint-content">
+            <div class="endpoint-desc">${ep.desc}</div>
+            ${paramsHtml ? `<div class="endpoint-params">${paramsHtml}</div>` : ''}
+            <div class="endpoint-code">${ep.code}</div>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    /* ── Playground Functions ── */
+    const BASE = 'https://anikato.vercel.app/api';
+
+    async function fetchApi(url, resultId) {
+      const el = document.getElementById(resultId);
+      el.classList.add('visible');
+      el.textContent = 'Loading...';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        el.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        el.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    function runSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      if (!q) return;
+      fetchApi(`${BASE}/search?keyword=${encodeURIComponent(q)}`, 'searchResult');
+    }
+
+    function runStream() {
+      const id = document.getElementById('streamInput').value.trim();
+      if (!id) return;
+      fetchApi(`${BASE}/stream?id=${encodeURIComponent(id)}`, 'streamResult');
+    }
+
+    function runRandom() {
+      fetchApi(`${BASE}/random`, 'randomResult');
+    }
+
+    function runSchedule() {
+      const d = document.getElementById('scheduleInput').value;
+      const url = d ? `${BASE}/schedule?date=${d}` : `${BASE}/schedule`;
+      fetchApi(url, 'scheduleResult');
+    }
+
+    document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+    document.getElementById('streamInput').addEventListener('keydown', e => { if (e.key === 'Enter') runStream(); });
+  </script>
+
 </body>
 </html>
