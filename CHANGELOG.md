@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] - 2026-06-08
+
+### Fixed
+- Health endpoint typo: `s` → `seconds` in uptime string formatting
+- Request counter middleware moved before route registrations (was never executing)
+- Request counter now properly tracks all API requests and errors
+
 ## [1.7.2] - 2026-06-08
 
 ### Added

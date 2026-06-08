@@ -361,7 +361,7 @@ app.get("/api/health", (req, res) => {
     success: true,
     results: {
       status: "healthy",
-      version: "1.7.2",
+      version: "1.7.3",
       uptime: `${hours}h ${minutes}m ${seconds}s`,
       uptimeSeconds: uptime,
       timestamp: new Date().toISOString(),
@@ -407,7 +407,7 @@ app.get("/api/openapi", (req, res) => {
     info: {
       title: "AniKotoAPI",
       description: "Free REST API for anime data from anikototv.to",
-      version: "1.7.2",
+      version: "1.7.3",
       contact: {
         name: "Shinei Nouzen",
         url: "https://github.com/Shineii86/AniKotoAPI",
