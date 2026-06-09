@@ -71,20 +71,6 @@ async function runTest(test) {
     failed++;
   }
 }
-    const data = await res.json();
-
-    if (data.success === true && data.results) {
-      console.log(`✅ ${test.name}`);
-      passed++;
-    } else {
-      console.log(`❌ ${test.name} - Invalid response format`);
-      failed++;
-    }
-  } catch (error) {
-    console.log(`❌ ${test.name} - ${error.message}`);
-    failed++;
-  }
-}
 
 async function runAll() {
   console.log(`\n🧪 Running ${tests.length} tests...\n`);

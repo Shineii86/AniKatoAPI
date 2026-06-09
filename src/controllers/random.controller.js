@@ -38,7 +38,6 @@ import { extractRandom } from "../extractors/random.extractor.js";
  */
 const getRandom = async (req, res, next) => {
   try {
-    }
     const data = await extractRandom();
     res.json({ success: true, results: data });
   } catch (error) {

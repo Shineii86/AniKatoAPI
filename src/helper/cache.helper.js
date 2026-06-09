@@ -40,6 +40,8 @@ const cache = new Map();
  * @default 300000
  */
 const CACHE_TTL = 5 * 60 * 1000;
+// ---- FEATURE: Maximum cache size ----
+const MAX_CACHE_SIZE = 100;
 
 // ══════════════════════════════════════════════════════════════
 // CACHE OPERATIONS
