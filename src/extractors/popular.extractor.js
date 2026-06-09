@@ -15,7 +15,6 @@
  * ======= • ======= • ======= • ======= • =======• =======
  */
 
-import * as cheerio from "cheerio";
 import { headers } from "../configs/header.config.js";
 import { URLS } from "../configs/dataUrl.js";
 import { countPages } from "../helper/countPages.helper.js";

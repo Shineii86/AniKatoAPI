@@ -56,7 +56,7 @@ const extractEpisodeList = async (slugOrId) => {
     }
 
     if (!animeId) {
-      return { animeId: 0, slug: resolvedSlug, totalEpisodes: 0, episodes: [] };
+      return { animeId: 0, slug: slugOrId, totalEpisodes: 0, episodes: [] };
     }
 
     try {
@@ -104,7 +104,7 @@ const extractEpisodeList = async (slugOrId) => {
 
       return {
         animeId,
-        slug: resolvedSlug,
+        slug: slugOrId,
         totalEpisodes: episodes.length,
         episodes
       };
@@ -112,7 +112,7 @@ const extractEpisodeList = async (slugOrId) => {
       // NOTE: Gracefully return empty list if AJAX call fails (e.g. network issue)
       return {
         animeId,
-        slug: resolvedSlug,
+        slug: slugOrId,
         totalEpisodes: 0,
         episodes: []
       };

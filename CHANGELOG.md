@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-06-09
+
+### Fixed
+- **CRITICAL**: Added global Express error handler (returns JSON instead of HTML)
+- **CRITICAL**: Removed caching from random endpoint (defeated purpose)
+- **CRITICAL**: Renamed share.jpg to share.png (MIME type mismatch)
+- **CRITICAL**: Fixed OG image dimensions (630 → 601)
+- **CRITICAL**: Fixed manifest.json icon sizes (192x192 → 512x512)
+- **CRITICAL**: Fixed implicit global event variable in console
+- **CRITICAL**: Added 9 missing endpoints to docs/endpoints.md
+- Imported version from package.json (no hardcoded drift)
+- Added dynamic endpoint count in stats
+- Added input sanitization for mapper API (SSRF prevention)
+- Added homepage caching (reduced 5 duplicate HTTP requests)
+- Added rate limiting (100 requests/minute per IP)
+- Added rel="noopener noreferrer" to all target="_blank" links
+- Fixed trailing slash inconsistency in console
+- Added noindex meta to 404.html
+- Fixed docs/architecture.md controller filenames and dependency versions
+- Fixed README.md dependency versions
+- Added 12 missing endpoint tests
+- Added escapeHtml helper for error messages
+- Consistent favicon across all pages
+- Added meta descriptions to privacy.html and tos.html
+- Added OG/Twitter meta tags to privacy.html and tos.html
+- Added aria-label to playground inputs
+- Added aria-hidden to decorative SVGs
+- Synced Twitter description with OG description
+- Fixed robots.txt to disallow /api
+- Added PWA fields to manifest.json
+- Removed 5 unused imports
+- Removed unused cookie-parser dependency
+- Fixed inconsistent error handling in extractors
+- Fixed resolvedSlug returning numeric ID
+- Added /watch endpoint to streaming docs
+- Improved test assertions and status code validation
+- Deleted orphaned og-image.svg and logo.png
+- Removed redundant try/catch from extractPages
+- Added max size eviction to cache
+- Added cache key sorting in filter controller
+- Added author meta tag
+- Fixed favicon.svg font
+
+### Changed
+- Version bumped to 1.9.0
+
 ## [1.8.0] - 2026-06-08
 
 ### Fixed

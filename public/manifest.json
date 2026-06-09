@@ -4,12 +4,16 @@
   "description": "Free REST API for anime data. Browse, search, stream episodes. 30+ endpoints, no API key required.",
   "start_url": "/",
   "display": "standalone",
+  "id": "/",
+  "scope": "/",
+  "lang": "en",
+  "orientation": "any",
   "background_color": "#0A0A12",
   "theme_color": "#A855F7",
   "icons": [
     {
       "src": "/favicon-origin.png",
-      "sizes": "192x192",
+      "sizes": "512x152",
       "type": "image/png",
       "purpose": "maskable"
     },

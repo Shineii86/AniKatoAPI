@@ -139,7 +139,11 @@ const extractServerList = async (episodeIds) => {
  */
 const extractMapperServers = async (malId, slug, timestamp) => {
   try {
-    const url = `https://mapper.nekostream.site/api/mal/${malId}/${slug}/${timestamp}`;
+    // Validate and sanitize input to prevent SSRF
+    if (!Number.isFinite(Number(malId))) throw new Error("Invalid malId");
+    if (!/^[a-zA-Z0-9-]+$/.test(slug)) throw new Error("Invalid slug");
+    if (!Number.isFinite(Number(timestamp))) throw new Error("Invalid timestamp");
+    const url = `https://mapper.nekostream.site/api/mal/${encodeURIComponent(malId)}/${encodeURIComponent(slug)}/${encodeURIComponent(timestamp)}`;
     const { data } = await axios.get(url, { headers });
 
     const servers = [];

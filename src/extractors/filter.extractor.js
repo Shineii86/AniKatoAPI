@@ -16,7 +16,6 @@
  * ======= • ======= • ======= • ======= • =======• =======
  */
 
-import * as cheerio from "cheerio";
 import { headers } from "../configs/header.config.js";
 import { URLS } from "../configs/dataUrl.js";
 import { GENRE_IDS, TYPE_IDS, STATUS_IDS, RATING_IDS, SORT_IDS } from "../configs/ids.config.js";

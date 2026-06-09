@@ -47,7 +47,7 @@ import { getCache, setCache } from "../helper/cache.helper.js";
 const getFilter = async (req, res, next) => {
   try {
     const params = req.query;
-    const cacheKey = `filter_${JSON.stringify(params)}`;
+    const cacheKey = `filter_${JSON.stringify(params, Object.keys(params).sort())}`;
     const cached = getCache(cacheKey);
     if (cached) {
       return res.json({ success: true, results: cached });

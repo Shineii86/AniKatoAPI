@@ -83,6 +83,11 @@ const getCache = (key) => {
  *   setCache("search-one-piece", animeResults);
  */
 const setCache = (key, data) => {
+  // Evict oldest entries if cache is full
+  if (cache.size >= MAX_CACHE_SIZE) {
+    const oldestKey = cache.keys().next().value;
+    cache.delete(oldestKey);
+  }
   cache.set(key, { data, timestamp: Date.now() });
 };
 

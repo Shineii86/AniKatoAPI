@@ -454,3 +454,147 @@ curl "https://anikototvapi.vercel.app/api/filter?keyword=&genre[]=1"
 ```
 
 Returns filtered and paginated anime list.
+
+---
+
+## GET /watch
+
+Get full watch page data including servers, trending, and recommended anime.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `slug` | string | Yes | Anime slug (e.g., `one-piece-100`) |
+| `ep` | number | Yes | Episode number |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/watch?slug=one-piece-100&ep=1"
+```
+
+Returns episode data with server list, trending sidebar, and recommended anime.
+
+---
+
+## GET /search/suggest
+
+Get search autocomplete suggestions.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `keyword` | string | Yes | Search keyword |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/search/suggest?keyword=naruto"
+```
+
+Returns array of suggestion objects with title, ID, and image.
+
+---
+
+## GET /episodes-ajax/:id
+
+Get AJAX-loaded episode list for an anime.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Anime ID or slug |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/episodes-ajax/one-piece-100"
+```
+
+Returns episode list with filters, ranges, and server IDs.
+
+---
+
+## GET /mapper-servers
+
+Get cross-server mapping for gogoanime/anivibe servers.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `malId` | number | Yes | MyAnimeList ID |
+| `slug` | string | Yes | Anime slug |
+| `timestamp` | number | Yes | Timestamp |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/mapper-servers?malId=21&slug=one-piece-100&timestamp=1234567890"
+```
+
+Returns mapped server URLs for gogoanime/anivibe.
+
+---
+
+## GET /newly-added
+
+Get newly added anime series.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `page` | number | No | Page number (default: 1) |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/newly-added"
+```
+
+Returns paginated list of newly added anime.
+
+---
+
+## GET /trending-sidebar
+
+Get trending sidebar widget data.
+
+```bash
+curl "https://anikototvapi.vercel.app/api/trending-sidebar"
+```
+
+Returns trending anime for sidebar display.
+
+---
+
+## GET /seasons/:id
+
+Get season information for an anime.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Anime slug |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/seasons/one-piece-100"
+```
+
+Returns season data including related seasons.
+
+---
+
+## GET /watch-order/:id
+
+Get recommended watch order for an anime.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Anime slug |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/watch-order/one-piece-100"
+```
+
+Returns recommended watch order sequence.
+
+---
+
+## GET /az-list/:letter
+
+Get anime alphabetically by letter.
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `letter` | string | Yes | Letter (a-z, or # for numbers) |
+| `page` | number | No | Page number (default: 1) |
+
+```bash
+curl "https://anikototvapi.vercel.app/api/az-list/a"
+```
+
+Returns paginated list of anime starting with the specified letter.

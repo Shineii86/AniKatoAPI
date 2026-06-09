@@ -251,3 +251,24 @@ player.source = {
 | "No servers found" | The `server_ids` may be invalid, try another episode |
 | Stream URL 403 | Some servers require specific referrer headers |
 | CORS error | Use a proxy or access from server-side |
+
+---
+
+## Alternative: All-in-One /watch Endpoint
+
+For a simpler approach, use the `/watch` endpoint which returns episode data, servers, and recommendations in a single call.
+
+**Request:**
+
+```bash
+curl "https://anikototvapi.vercel.app/api/watch?slug=road-of-naruto-ggjw8&ep=1"
+```
+
+**Response includes:**
+- Episode data with title, number, and description
+- Server list (sub and dub)
+- Trending sidebar anime
+- Recommended anime
+- Next episode schedule
+
+This is useful when you need all watch page data at once instead of making 3 separate requests.

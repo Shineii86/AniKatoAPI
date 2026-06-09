@@ -49,7 +49,7 @@ const extractWatchOrder = async (animeId) => {
     return data || [];
   } catch (error) {
     // NOTE: Return empty array on error to maintain consistent API
-    return [];
+    throw error;
   }
 };
 

@@ -1,5 +1,8 @@
 /*
  * ======= • ======= • ======= • ======= • =======• =======
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json");
  * AniKotoAPI — apiRoutes.js
  * Repository: https://github.com/Shineii86/AniKotoAPI
  *
@@ -361,7 +364,7 @@ app.get("/api/health", (req, res) => {
     success: true,
     results: {
       status: "healthy",
-      version: "1.8.0",
+      version: version,
       uptime: `${hours}h ${minutes}m ${seconds}s`,
       uptimeSeconds: uptime,
       timestamp: new Date().toISOString(),
@@ -407,7 +410,7 @@ app.get("/api/openapi", (req, res) => {
     info: {
       title: "AniKotoAPI",
       description: "Free REST API for anime data from anikototv.to",
-      version: "1.8.0",
+      version: version,
       contact: {
         name: "Shinei Nouzen",
         url: "https://github.com/Shineii86/AniKotoAPI",
@@ -437,6 +440,16 @@ app.get("/api/openapi", (req, res) => {
       "/health": { get: { summary: "Health check", tags: ["System"] } },
       "/stats": { get: { summary: "API statistics", tags: ["System"] } },
       "/openapi": { get: { summary: "OpenAPI spec", tags: ["System"] } },
+      "/watch": { get: { summary: "Watch page data", tags: ["Streaming"] } },
+      "/search/suggest": { get: { summary: "Search suggestions", tags: ["Search"] } },
+      "/episodes-ajax/{id}": { get: { summary: "AJAX episode list", tags: ["Episodes"] } },
+      "/mapper-servers": { get: { summary: "Mapper servers", tags: ["Streaming"] } },
+      "/newly-added": { get: { summary: "Newly added", tags: ["Releases"] } },
+      "/trending-sidebar": { get: { summary: "Trending sidebar", tags: ["Discovery"] } },
+      "/seasons/{id}": { get: { summary: "Season data", tags: ["Anime"] } },
+      "/watch-order/{id}": { get: { summary: "Watch order", tags: ["Anime"] } },
+      "/az-list/{letter}": { get: { summary: "A-Z listing", tags: ["Discovery"] } },
+      "/suggestions": { get: { summary: "Anime suggestions", tags: ["Search"] } },
     },
     tags: [
       { name: "Home", description: "Homepage data" },

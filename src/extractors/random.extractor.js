@@ -42,7 +42,7 @@ const extractRandom = async () => {
   try {
     // NOTE: maxRedirects=5 ensures we follow the random redirect chain
     // NOTE: validateStatus allows any 2xx/3xx response without throwing
-    const { data, request, response } = await axios.get(URLS.random, {
+    const { data, request } = await axios.get(URLS.random, {
       headers,
       maxRedirects: 5,
       validateStatus: (status) => status < 400

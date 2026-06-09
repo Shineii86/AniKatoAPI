@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/Cheerio-1.0-3572A5?style=flat-square&logoColor=white" alt="Cheerio"/>
   <img src="https://img.shields.io/badge/Vercel-Serverless-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel"/>
   <img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square&logo=mit&logoColor=white" alt="License"/>
-  <img src="https://img.shields.io/badge/Version-1.8.0-f43f8e?style=flat-square&logoColor=white" alt="Version"/>
+  <img src="https://img.shields.io/badge/Version-1.9.0-f43f8e?style=flat-square&logoColor=white" alt="Version"/>
   <img src="https://img.shields.io/badge/Endpoints-30-6366f1?style=flat-square&logoColor=white" alt="Endpoints"/>
   <img src="https://img.shields.io/badge/Anime-10000+-a855f7?style=flat-square&logoColor=white" alt="Anime Database"/>
 </p>
@@ -225,11 +225,11 @@ flowchart TD
 | Technology | Purpose | Version | Documentation |
 |:---|:---|:---|:---|
 | 🟢 [Node.js](https://nodejs.org/) | JavaScript runtime | >= 20 | [Docs](https://nodejs.org/docs/) |
-| ⚡ [Express](https://expressjs.com/) | HTTP server framework | 5.2 | [Docs](https://expressjs.com/en/5x/api.html) |
+| ⚡ [Express | 4.21 | [Docs](https://expressjs.com/en/5x/api.html) |
 | ▲ [Vercel Functions](https://vercel.com/docs/functions) | Serverless deployment | — | [Docs](https://vercel.com/docs/functions) |
 | 🔍 [Cheerio](https://cheerio.js.org/) | HTML parsing & scraping | 1.0 | [Docs](https://cheerio.js.org/docs/) |
-| 🌐 [Axios](https://axios-http.com/) | HTTP client | 1.11 | [Docs](https://axios-http.com/docs/intro) |
-| 🔧 [dotenv](https://github.com/motdotla/dotenv) | Environment variables | 17.2 | [Docs](https://github.com/motdotla/dotenv) |
+| 🌐 [Axios | 1.8 | [Docs](https://axios-http.com/docs/intro) |
+| 🔧 [dotenv | 16.4 | [Docs](https://github.com/motdotla/dotenv) |
 | 🔒 [cors](https://github.com/expressjs/cors) | CORS middleware | 2.8 | [Docs](https://github.com/expressjs/cors) |
 | 🍪 [cookie-parser](https://github.com/expressjs/cookie-parser) | Cookie parsing | 1.4 | [Docs](https://github.com/expressjs/cookie-parser) |
 
@@ -238,10 +238,10 @@ flowchart TD
 ```json
 {
   "express": "^5.2.0",        // HTTP server
-  "axios": "^1.11.0",         // HTTP client for scraping
+  "axios": "^1.8.0",         // HTTP client for scraping
   "cheerio": "^1.0.0-rc.12",  // HTML parsing
   "cors": "^2.8.5",           // CORS middleware
-  "dotenv": "^17.2.0",        // Environment variables
+  "dotenv | 16.4.0",        // Environment variables
   "cookie-parser": "^1.4.7"   // Cookie parsing
 }
 ```

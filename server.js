@@ -36,6 +36,7 @@ const PORT = process.env.PORT || 4444;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const publicDir = path.join(process.cwd(), "public");
+const has404File = fs.existsSync(path.join(publicDir, "404.html"));
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
 
 // ══════════════════════════════════════════════════════════════
@@ -45,7 +46,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
 // NOTE: Single unified CORS middleware — handles all origin validation
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (!allowedOrigins || allowedOrigins.includes("*") || (origin && allowedOrigins.includes(origin))) {
+  if (allowedOrigins && (allowedOrigins.includes("*") || (origin && allowedOrigins.includes(origin)))) {
     res.setHeader("Access-Control-Allow-Origin", origin || "*");
   }
   res.setHeader("Access-Control-Allow-Methods", "GET");
@@ -116,11 +117,36 @@ const jsonError = (res, message = "Internal server error", status = 500) =>
 // API ROUTES
 // ══════════════════════════════════════════════════════════════
 
+// ---- FEATURE: Rate limiting (100 requests per minute per IP) ----
+const requestCounts = new Map();
+app.use((req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  const windowMs = 60000;
+  const maxRequests = 100;
+  if (!requestCounts.has(ip)) {
+    requestCounts.set(ip, []);
+  }
+  const timestamps = requestCounts.get(ip).filter(t => now - t < windowMs);
+  requestCounts.set(ip, timestamps);
+  if (timestamps.length >= maxRequests) {
+    return res.status(429).json({ success: false, message: "Rate limit exceeded. Try again later." });
+  }
+  timestamps.push(now);
+  next();
+});
+
 createApiRoutes(app, jsonResponse, jsonError);
 
 // ══════════════════════════════════════════════════════════════
 // 404 HANDLER
 // ══════════════════════════════════════════════════════════════
+
+// ---- FEATURE: Global error handler ----
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ success: false, message: err.message || "Internal server error" });
+});
 
 // ---- FEATURE: Catch-all 404 handler for undefined routes ----
 app.use((req, res) => {

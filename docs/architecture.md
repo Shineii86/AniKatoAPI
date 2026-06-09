@@ -37,23 +37,23 @@ AniKotoAPI/
 │   │   └── category.route.js          # genre/:name, type/:name, status/:name
 │   │
 │   ├── controllers/
-│   │   ├── home.controller.js         # Homepage data
+│   │   ├── homeInfo.controller.js         # Homepage data
 │   │   ├── search.controller.js       # Anime search
-│   │   ├── info.controller.js         # Anime info
-│   │   ├── episodes.controller.js     # Episode list
+│   │   ├── animeInfo.controller.js         # Anime info
+│   │   ├── episodeList.controller.js     # Episode list
 │   │   ├── servers.controller.js      # Server list
 │   │   ├── stream.controller.js       # Stream URL
 │   │   ├── suggestion.controller.js   # Anime suggestions
 │   │   ├── spotlight.controller.js    # Spotlight anime
 │   │   ├── trending.controller.js     # Trending anime
-│   │   ├── topTen.controller.js       # Top 10
+│   │   ├── topten.controller.js       # Top 10
 │   │   ├── schedule.controller.js     # Schedule
 │   │   ├── random.controller.js       # Random anime
 │   │   ├── newRelease.controller.js   # New releases
-│   │   ├── mostPopular.controller.js  # Most popular
-│   │   ├── genre.controller.js        # Genre filter
-│   │   ├── type.controller.js         # Type filter
-│   │   ├── status.controller.js       # Status filter
+│   │   ├── popular.controller.js  # Most popular
+│   │   ├── category.controller.js        # Genre filter
+│   │   ├── category.controller.js         # Type filter
+│   │   ├── category.controller.js       # Status filter
 │   │   └── filter.controller.js       # Advanced filter
 │   │
 │   ├── extractors/
@@ -204,9 +204,9 @@ Error responses:
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| express | ^4.18.2 | Web framework |
+| express | ^4.21.0 | Web framework |
 | cheerio | ^1.0.0-rc.12 | HTML parsing |
-| axios | ^1.6.0 | HTTP requests |
+| axios | ^1.8.0 | HTTP requests |
 | cors | ^2.8.5 | CORS headers |
-| cookie-parser | ^1.4.6 | Cookie parsing |
-| dotenv | ^16.3.1 | Environment variables |
+| cookie-parser | ^1.4.7 | Cookie parsing |
+| dotenv | ^16.4.0 | Environment variables |

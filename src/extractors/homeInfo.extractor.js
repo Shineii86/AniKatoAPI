@@ -19,6 +19,7 @@ import * as cheerio from "cheerio";
 import axios from "axios";
 import { headers } from "../configs/header.config.js";
 import { URLS } from "../configs/dataUrl.js";
+import { getCache, setCache } from "../helper/cache.helper.js";
 
 // ══════════════════════════════════════════════════════════════
 // HOME INFO EXTRACTOR
@@ -36,6 +37,8 @@ import { URLS } from "../configs/dataUrl.js";
  *   console.log(home.spotlights.length); // number of spotlight items
  */
 const extractHomeInfo = async () => {
+  const cached = getCache("home");
+  if (cached) return cached;
   try {
     const { data } = await axios.get(URLS.home, { headers });
     const $ = cheerio.load(data);
