@@ -46,7 +46,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
 // NOTE: Single unified CORS middleware — handles all origin validation
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (allowedOrigins && (allowedOrigins.includes("*") || (origin && allowedOrigins.includes(origin)))) {
+  if (!allowedOrigins || allowedOrigins.includes("*") || (origin && allowedOrigins.includes(origin))) {
     res.setHeader("Access-Control-Allow-Origin", origin || "*");
   }
   res.setHeader("Access-Control-Allow-Methods", "GET");
